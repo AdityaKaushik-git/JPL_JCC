@@ -224,7 +224,7 @@ module.exports = (io) => {
             if (socket.user.role !== 'admin' || !activeAuction.auctionId) return;
 
             clearInterval(activeAuction.timerInterval);
-            
+
             try {
                 const playerId = activeAuction.player.id;
                 await pool.query('INSERT INTO auction_results (auction_id, player_id, status) VALUES (?, ?, ?)', [activeAuction.auctionId, playerId, 'Unsold']);
@@ -237,6 +237,31 @@ module.exports = (io) => {
 
             } catch (err) {
                 console.error(err);
+            }
+        });
+
+        // Re-auction an unsold player: reset status to Available
+        socket.on('admin:reAuction', async (data) => {
+            if (socket.user.role !== 'admin') return;
+            const { playerId } = data;
+
+            try {
+                // Reset player status to Available
+                await pool.query('UPDATE players SET status = ? WHERE id = ?', ['Available', playerId]);
+
+                // Delete old unsold auction_results entry for this player so history is clean
+                await pool.query(
+                    'DELETE FROM auction_results WHERE player_id = ? AND status = ?',
+                    [playerId, 'Unsold']
+                );
+
+                socket.emit('auction:notification', { text: 'Player reset to Available. You can now start their auction again!', type: 'success' });
+                // Broadcast player list refresh signal
+                io.emit('auction:playerReset', { playerId });
+
+            } catch (err) {
+                console.error('Re-auction error:', err);
+                socket.emit('auction:notification', { text: 'Failed to reset player.', type: 'danger' });
             }
         });
 

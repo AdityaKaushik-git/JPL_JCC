@@ -74,6 +74,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     socket.on('auction:timer', updateTimerDisplay);
 
+    // When a player is reset to Available, refresh the list automatically
+    socket.on('auction:playerReset', () => {
+        loadPlayers();
+    });
+
     socket.on('auction:notification', (msg) => {
         const historyList = document.getElementById('bidHistoryList');
         // Add minimal log if wanted
@@ -154,9 +159,26 @@ document.addEventListener('DOMContentLoaded', async () => {
                     };
                     li.appendChild(btn);
                 }
-                
+
+                if (p.status === 'Unsold') {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn btn-sm btn-outline-warning shadow-sm';
+                    btn.innerHTML = '<i class="fas fa-redo"></i> Re-Auction';
+                    btn.onclick = () => {
+                        if(activeAuctionId) {
+                            alert('An auction is already active. Complete it first.');
+                            return;
+                        }
+                        if(confirm(`Re-add ${p.name} to the auction pool?`)) {
+                            socket.emit('admin:reAuction', { playerId: p.id });
+                        }
+                    };
+                    li.appendChild(btn);
+                }
+
                 playerList.appendChild(li);
             });
+
             
             document.getElementById('statAvailable').textContent = available;
             document.getElementById('statSold').textContent = sold;
