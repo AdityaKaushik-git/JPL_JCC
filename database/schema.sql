@@ -1,6 +1,4 @@
-CREATE DATABASE IF NOT EXISTS jpl_auction;
-USE jpl_auction;
-
+-- Tables for JPL Auction
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(100) NOT NULL,
