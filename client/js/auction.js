@@ -1,14 +1,32 @@
 document.addEventListener('DOMContentLoaded', async () => {
     const token = localStorage.getItem('jpl_token');
-    const user = JSON.parse(localStorage.getItem('jpl_user'));
-    
+    let user = JSON.parse(localStorage.getItem('jpl_user'));
+
     if (!token || !user) {
         window.location.href = '/login';
         return;
     }
 
+    // Always verify role from server to avoid stale localStorage redirects
+    try {
+        const meRes = await fetch('/api/auth/me', {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (!meRes.ok) {
+            localStorage.removeItem('jpl_token');
+            localStorage.removeItem('jpl_user');
+            window.location.href = '/login';
+            return;
+        }
+        const meData = await meRes.json();
+        user = meData.user;
+        localStorage.setItem('jpl_user', JSON.stringify(user));
+    } catch(e) {
+        console.error('Could not verify user, using cached data');
+    }
+
     if (user.role === 'admin') {
-        window.location.href = '/admin'; // Admins use admin dashboard to control auction
+        window.location.href = '/admin';
         return;
     }
 
