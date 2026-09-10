@@ -168,12 +168,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         localStorage.setItem('jpl_user', JSON.stringify(user));
     });
 
+    // Track my active bid so we can refund it if outbid
+    let myActiveBid = 0;
+
     // Place Bid Action
     btnPlaceBid.addEventListener('click', () => {
         if (!currentAuctionId) return;
-        // The server will validate the bid, no need to permanently lock the button
-        socket.emit('user:placeBid', { auctionId: currentAuctionId, amount: nextBidVal });
+        const bidAmount = nextBidVal;
+
+        // Instantly deduct from displayed purse
+        myActiveBid = bidAmount;
+        purse -= bidAmount;
+        myPurseEl.textContent = `₹${purse.toLocaleString('en-IN')}`;
+        btnPlaceBid.disabled = true;
+
+        socket.emit('user:placeBid', { auctionId: currentAuctionId, amount: bidAmount });
     });
+
+    // If the stateUpdate shows I'm no longer the highest bidder, refund my previous bid
+    socket.on('auction:stateUpdate', (data) => {
+        if (myActiveBid > 0 && data.highestBidderName !== user.full_name) {
+            // I was outbid — restore my purse display
+            purse += myActiveBid;
+            myActiveBid = 0;
+            myPurseEl.textContent = `₹${purse.toLocaleString('en-IN')}`;
+        }
+    });
+
 
     function updateTimerDisplay(seconds) {
         if (seconds < 0) seconds = 0;

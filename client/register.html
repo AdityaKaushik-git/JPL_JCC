@@ -5,85 +5,118 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - JPL Auction</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/">JPL Auction</a>
-        </div>
-    </nav>
 
-    <div class="container auth-wrapper">
-        <div class="card auth-card w-100">
-            <div class="card-body p-5">
-                <h2 class="text-center mb-4">Register for JPL</h2>
-                <div id="registerAlert" class="alert d-none"></div>
-                <form id="registerForm">
-                    <div class="mb-3">
-                        <label for="full_name" class="form-label">Full Name</label>
-                        <input type="text" class="form-control" id="full_name" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="enrollment_number" class="form-label">Enrollment Number</label>
-                        <input type="text" class="form-control" id="enrollment_number" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">College Email</label>
-                        <input type="email" class="form-control" id="email" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="mobile" class="form-label">Mobile Number</label>
-                        <input type="text" class="form-control" id="mobile" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="role" class="form-label">Register As</label>
-                        <select class="form-select" id="role" required>
-                            <option value="user">Team Captain (Bidder)</option>
-                            <option value="player">Player</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Player specific fields (Hidden by default) -->
-                    <div id="playerFields" class="d-none bg-light p-3 border rounded mb-3">
-                        <h5 class="mb-3">Player Details</h5>
-                        <div class="mb-3">
-                            <label for="playing_role" class="form-label">Playing Role</label>
-                            <select class="form-select" id="playing_role">
-                                <option value="Batsman">Batsman</option>
-                                <option value="Bowler">Bowler</option>
-                                <option value="All-Rounder">All-Rounder</option>
-                                <option value="Wicket Keeper">Wicket Keeper</option>
-                            </select>
+<div class="split-layout">
+    <div class="split-left">
+        <h1 class="display-3 fw-bold text-warning mb-3"><i class="fas fa-user-plus"></i></h1>
+        <h2 class="text-white">Join the Action</h2>
+        <p class="text-muted">Register to bid or participate as a player in the JPL Auction.</p>
+    </div>
+    <div class="split-right">
+        <div class="glass-card w-100" style="max-width: 500px;">
+            <h3 class="text-center text-white mb-4">Register</h3>
+            <div id="registerAlert" class="alert d-none"></div>
+            
+            <form id="registerForm">
+                <div class="mb-4">
+                    <label class="text-muted mb-2">I want to register as:</label>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="role-card" onclick="selectRole('bidder')" id="roleCardBidder">
+                                <i class="fas fa-gavel role-icon"></i>
+                                <div>Bidder</div>
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="course" class="form-label">Course</label>
-                            <input type="text" class="form-control" id="course" placeholder="e.g. BTech, BCA">
-                        </div>
-                        <div class="mb-3">
-                            <label for="year" class="form-label">Year</label>
-                            <input type="text" class="form-control" id="year" placeholder="e.g. 1st, 2nd, 3rd, 4th">
+                        <div class="col-6">
+                            <div class="role-card" onclick="selectRole('player')" id="roleCardPlayer">
+                                <i class="fas fa-running role-icon"></i>
+                                <div>Player</div>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" required>
-                    </div>
-                    <div class="mb-4">
-                        <label for="confirm_password" class="form-label">Confirm Password</label>
-                        <input type="password" class="form-control" id="confirm_password" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100 py-2">Register</button>
-                </form>
-                <div class="mt-4 text-center">
-                    <p>Already have an account? <a href="/login">Login here</a></p>
+                    <input type="hidden" id="role" name="role" required>
                 </div>
-            </div>
+
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="full_name" placeholder="Full Name" required>
+                    <label for="full_name">Full Name</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="enrollment_number" placeholder="Enrollment No" required>
+                    <label for="enrollment_number">Enrollment Number</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="email" class="form-control" id="email" placeholder="Email" required>
+                    <label for="email">Email</label>
+                </div>
+                <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="mobile" placeholder="Mobile" required>
+                    <label for="mobile">Mobile Number</label>
+                </div>
+
+                <div id="playerFields" style="display: none; transition: all 0.3s ease;">
+                    <div class="form-floating mb-3">
+                        <select class="form-select" id="playing_role">
+                            <option value="Batsman">Batsman</option>
+                            <option value="Bowler">Bowler</option>
+                            <option value="All-Rounder">All-Rounder</option>
+                            <option value="Wicket-Keeper">Wicket-Keeper</option>
+                        </select>
+                        <label for="playing_role">Playing Role</label>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="course" placeholder="Course">
+                                <label for="course">Course</label>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="form-floating mb-3">
+                                <input type="text" class="form-control" id="year" placeholder="Year">
+                                <label for="year">Year</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <input type="password" class="form-control" id="password" placeholder="Password" required>
+                    <label for="password">Password</label>
+                </div>
+                <div class="form-floating mb-4">
+                    <input type="password" class="form-control" id="confirm_password" placeholder="Confirm Password" required>
+                    <label for="confirm_password">Confirm Password</label>
+                </div>
+
+                <button type="submit" class="btn btn-gold w-100 py-2 mb-3">Create Account</button>
+                <div class="text-center text-muted">
+                    Already have an account? <a href="login.html" class="text-warning text-decoration-none">Login</a>
+                </div>
+            </form>
         </div>
     </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/auth.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function selectRole(role) {
+        document.getElementById('role').value = role;
+        document.getElementById('roleCardBidder').classList.remove('active');
+        document.getElementById('roleCardPlayer').classList.remove('active');
+        
+        if (role === 'bidder') {
+            document.getElementById('roleCardBidder').classList.add('active');
+            document.getElementById('playerFields').style.display = 'none';
+        } else {
+            document.getElementById('roleCardPlayer').classList.add('active');
+            document.getElementById('playerFields').style.display = 'block';
+        }
+    }
+</script>
 </body>
 </html>

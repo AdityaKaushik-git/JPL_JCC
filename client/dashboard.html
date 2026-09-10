@@ -5,108 +5,94 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - JPL Auction</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/">JPL Auction</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto" id="nav-links">
-                    <!-- Populated by JS -->
-                </ul>
-            </div>
-        </div>
-    </nav>
 
-    <div class="container mt-5">
-        <div class="row mb-4">
-            <div class="col-12">
-                <h2>Welcome, <span id="userName">User</span>!</h2>
-                <p class="text-muted">Enrollment No: <span id="userEnrollment"></span></p>
-            </div>
+<nav class="navbar navbar-expand-lg jpl-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="#"><i class="fas fa-gavel"></i> JPL Dashboard</a>
+        <div class="d-flex align-items-center text-white">
+            <span class="me-3" id="userName">User</span>
+            <span class="badge bg-secondary" id="userEnrollment">ENR001</span>
         </div>
+    </div>
+</nav>
 
-        <div class="row mb-4">
-            <div class="col-md-4 mb-3">
-                <div class="card bg-primary text-white h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Available Purse</h5>
-                        <h2 class="display-6" id="availablePurse">₹0</h2>
-                    </div>
+<div class="container py-5">
+    
+    <!-- Bidder Dashboard View -->
+    <div id="userDashboardView">
+        <h2 class="mb-4">Team Overview</h2>
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="stat-card stat-card-blue text-center h-100">
+                    <h5 class="text-muted">Available Purse</h5>
+                    <h2 class="text-info">₹<span id="availablePurse">0</span></h2>
                 </div>
             </div>
-            <div class="col-md-4 mb-3">
-                <div class="card bg-danger text-white h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Amount Spent</h5>
-                        <h2 class="display-6" id="amountSpent">₹0</h2>
-                    </div>
+            <div class="col-md-4">
+                <div class="stat-card stat-card-red text-center h-100">
+                    <h5 class="text-muted">Amount Spent</h5>
+                    <h2 class="text-danger">₹<span id="amountSpent">0</span></h2>
                 </div>
             </div>
-            <div class="col-md-4 mb-3">
-                <div class="card bg-success text-white h-100">
-                    <div class="card-body">
-                        <h5 class="card-title">Players Purchased</h5>
-                        <h2 class="display-6" id="playersPurchased">0</h2>
-                    </div>
+            <div class="col-md-4">
+                <div class="stat-card stat-card-green text-center h-100">
+                    <h5 class="text-muted">Players Purchased</h5>
+                    <h2 class="text-success"><span id="playersPurchased">0</span></h2>
                 </div>
             </div>
         </div>
 
-        <div class="row" id="userDashboardView">
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body text-center d-flex flex-column justify-content-center py-5">
-                        <h4 class="mb-4">Current Auction Status</h4>
-                        <h3 id="auctionStatus" class="text-primary mb-4">Loading...</h3>
-                        <a href="/auction" class="btn btn-warning btn-lg fw-bold">ENTER LIVE AUCTION</a>
-                    </div>
+        <div class="row g-4">
+            <div class="col-md-8">
+                <div class="glass-card">
+                    <h4>Auction Status</h4>
+                    <p class="mb-4">Status: <span id="auctionStatus"><span class="live-indicator"></span>Live</span></p>
+                    <a href="auction.html" class="btn btn-gold btn-lg w-100">Enter Live Auction Arena</a>
                 </div>
             </div>
-            <div class="col-md-6 mb-4">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
-                        <h4 class="mb-4">Quick Links</h4>
-                        <div class="d-grid gap-3">
-                            <a href="/my-team" class="btn btn-outline-primary btn-lg"><i class="fas fa-users me-2"></i> My Team</a>
-                            <a href="/my-bids" class="btn btn-outline-secondary btn-lg"><i class="fas fa-gavel me-2"></i> My Bids</a>
-                            <a href="/profile" class="btn btn-outline-info btn-lg"><i class="fas fa-user me-2"></i> Profile</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="row d-none" id="playerDashboardView">
-            <div class="col-12 mb-4">
-                <div class="card shadow border-info">
-                    <div class="card-header bg-info text-white">
-                        <h4 class="mb-0">Player Controls</h4>
-                    </div>
-                    <div class="card-body">
-                        <p>Welcome to your player dashboard. Update your base bidding amount here.</p>
-                        <form id="updateBasePriceForm" class="d-flex align-items-end gap-3">
-                            <div>
-                                <label for="myBasePrice" class="form-label text-muted">My Base Price (₹)</label>
-                                <input type="number" class="form-control form-control-lg" id="myBasePrice" min="1000" max="5000000" step="100" required>
-                                <div class="form-text">Maximum 50 Lakhs (50,00,000)</div>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-lg">Update Amount</button>
-                        </form>
-                        <div id="priceUpdateAlert" class="alert mt-3 d-none"></div>
+            <div class="col-md-4">
+                <div class="glass-card h-100">
+                    <h4>Quick Links</h4>
+                    <div class="d-flex flex-column gap-3 mt-3">
+                        <a href="#" class="text-decoration-none text-white"><i class="fas fa-list me-2"></i> My Squad</a>
+                        <a href="#" class="text-decoration-none text-white"><i class="fas fa-chart-bar me-2"></i> Auction Rules</a>
+                        <a href="#" class="text-decoration-none text-danger"><i class="fas fa-sign-out-alt me-2"></i> Logout</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/main.js"></script>
-    <script src="/js/dashboard.js"></script>
+    <!-- Player Dashboard View -->
+    <div id="playerDashboardView" style="display: none;">
+        <h2 class="mb-4">Player Profile</h2>
+        <div class="glass-card mb-4" style="max-width: 500px;">
+            <div id="priceUpdateAlert"></div>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="m-0">Base Price</h5>
+                <h3 class="text-warning m-0">₹<span id="myBasePrice">0</span></h3>
+            </div>
+            <form id="updateBasePriceForm">
+                <div class="input-group mb-3">
+                    <span class="input-group-text bg-dark text-white border-secondary">₹</span>
+                    <input type="number" class="form-control bg-dark text-white border-secondary" id="newBasePrice" placeholder="New Base Price" required>
+                    <button class="btn btn-gold" type="submit">Update</button>
+                </div>
+            </form>
+        </div>
+        <div class="glass-card">
+            <h4>Live Auction Status</h4>
+            <p>You can follow the auction live.</p>
+            <a href="auction.html" class="btn btn-outline-warning mt-2">Watch Live Auction</a>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -3,84 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JPL - JCC Player League Auction</title>
+    <title>JPL Auction - Landing</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/">JPL Auction</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto" id="nav-links">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-primary text-white px-3 ms-2" href="/register">Register</a>
-                    </li>
-                </ul>
+<body class="hero-gradient">
+
+<nav class="navbar navbar-expand-lg jpl-navbar fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="#"><i class="fas fa-gavel"></i> JPL AUCTION</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+                <li class="nav-item"><a class="nav-link" href="register.html">Register</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container text-center text-white" style="padding-top: 150px; min-height: 80vh; display: flex; flex-direction: column; justify-content: center;">
+    <h1 class="display-1 fw-bold text-warning mb-3">JPL AUCTION</h1>
+    <h3 class="fw-light mb-5">The Premier College Player Auction Experience</h3>
+    
+    <div class="row justify-content-center mb-5">
+        <div class="col-md-3 glass-card mx-2 mb-3"><i class="fas fa-bolt text-warning fs-3 mb-2"></i><br>Real-Time Bidding</div>
+        <div class="col-md-3 glass-card mx-2 mb-3"><i class="fas fa-users text-info fs-3 mb-2"></i><br>Role-Based Access</div>
+        <div class="col-md-3 glass-card mx-2 mb-3"><i class="fas fa-clock text-danger fs-3 mb-2"></i><br>Live Countdown</div>
+    </div>
+
+    <div class="d-flex justify-content-center gap-4">
+        <a href="login.html" class="btn btn-gold btn-lg px-5">Login</a>
+        <a href="register.html" class="btn btn-outline-light btn-lg px-5">Register</a>
+    </div>
+</div>
+
+<div class="container py-5">
+    <h2 class="text-center text-warning mb-5">Features</h2>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="glass-card text-center h-100">
+                <i class="fas fa-gavel text-warning fs-1 mb-3"></i>
+                <h4>Live Auctions</h4>
+                <p class="text-muted">Experience the thrill of real-time bidding with live updates across all connected devices.</p>
             </div>
         </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <header class="hero-section text-center text-white d-flex align-items-center">
-        <div class="container">
-            <h1 class="display-3 fw-bold mb-4">Welcome to the JPL Auction</h1>
-            <p class="lead mb-5">The ultimate college-level player auction platform. Build your dream team today.</p>
-            <a href="/register" class="btn btn-primary btn-lg px-5 py-3 me-3">Register Now</a>
-            <a href="/login" class="btn btn-outline-light btn-lg px-5 py-3">Login to Dashboard</a>
-        </div>
-    </header>
-
-    <!-- Features Section -->
-    <section class="py-5 bg-light">
-        <div class="container">
-            <div class="row text-center">
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm border-0">
-                        <div class="card-body py-5">
-                            <i class="fas fa-bolt fa-3x text-warning mb-3"></i>
-                            <h3 class="h4">Real-Time Bidding</h3>
-                            <p class="text-muted">Experience the thrill of a live auction with instant updates and no page refreshes.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm border-0">
-                        <div class="card-body py-5">
-                            <i class="fas fa-users fa-3x text-primary mb-3"></i>
-                            <h3 class="h4">Build Your Team</h3>
-                            <p class="text-muted">Strategize and purchase the best players within your purse limit.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm border-0">
-                        <div class="card-body py-5">
-                            <i class="fas fa-chart-line fa-3x text-success mb-3"></i>
-                            <h3 class="h4">Live Analytics</h3>
-                            <p class="text-muted">Track bidding history, purse usage, and player stats in real-time.</p>
-                        </div>
-                    </div>
-                </div>
+        <div class="col-md-4">
+            <div class="glass-card text-center h-100">
+                <i class="fas fa-clipboard-list text-info fs-1 mb-3"></i>
+                <h4>Team Management</h4>
+                <p class="text-muted">Manage your squad, monitor your purse, and build the ultimate college cricket team.</p>
             </div>
         </div>
-    </section>
-
-    <footer class="bg-dark text-white text-center py-4">
-        <div class="container">
-            <p class="mb-0">&copy; 2026 JPL Auction. All rights reserved.</p>
+        <div class="col-md-4">
+            <div class="glass-card text-center h-100">
+                <i class="fas fa-broadcast-tower text-danger fs-1 mb-3"></i>
+                <h4>Real-Time Updates</h4>
+                <p class="text-muted">Powered by WebSockets, never miss a bid or a sold player with instant notifications.</p>
+            </div>
         </div>
-    </footer>
+    </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/main.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
