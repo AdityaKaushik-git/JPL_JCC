@@ -141,7 +141,9 @@ module.exports = (io) => {
                 activeAuction.currentBid = amount;
                 activeAuction.highestBidderId = socket.user.id;
                 activeAuction.highestBidderName = user.full_name;
-                activeAuction.timeLeft = 180; // Reset timer to 3 mins on bid
+                if (activeAuction.timeLeft < 30) {
+                    activeAuction.timeLeft = 30; // Reset timer to 30s if less than 30s left
+                }
                 activeAuction.bidHistory.unshift({ userName: user.full_name, amount: amount });
                 
                 io.emit('auction:stateUpdate', getSanitizedState());
@@ -295,13 +297,13 @@ module.exports = (io) => {
 
     function getSanitizedState() {
         return {
-            auctionId: activeAuction.auctionId,
-            status: activeAuction.status,
-            player: activeAuction.player,
-            currentBid: activeAuction.currentBid,
-            highestBidderName: activeAuction.highestBidderName,
-            timeLeft: activeAuction.timeLeft,
-            bidHistory: activeAuction.bidHistory,
+            auctionId: activeAuction.auctionId || null,
+            status: activeAuction.status || 'Pending',
+            player: activeAuction.player ? { ...activeAuction.player } : null,
+            currentBid: activeAuction.currentBid || 0,
+            highestBidderName: activeAuction.highestBidderName || null,
+            timeLeft: activeAuction.timeLeft || 0,
+            bidHistory: activeAuction.bidHistory || [],
             nextBid: getNextBidAmount()
         };
     }

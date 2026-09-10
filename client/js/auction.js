@@ -115,6 +115,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Update History
         renderHistory(data.bidHistory);
+        
+        // Outbid logic
+        if (myActiveBid > 0 && data.highestBidderName !== user.full_name) {
+            purse += myActiveBid;
+            myActiveBid = 0;
+            myPurseEl.textContent = `₹${purse.toLocaleString('en-IN')}`;
+        }
     });
 
     socket.on('auction:timer', (time) => {
@@ -131,7 +138,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     socket.on('auction:sold', (data) => {
         // Show sold animation
         soldOverlay.classList.remove('d-none');
-        soldOverlay.classList.add('d-flex');
         document.getElementById('soldPlayerName').textContent = data.playerName;
         document.getElementById('soldTeamName').textContent = data.teamName;
         document.getElementById('soldPrice').textContent = data.price;
@@ -152,7 +158,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
 
         setTimeout(() => {
-            soldOverlay.classList.remove('d-flex');
             soldOverlay.classList.add('d-none');
         }, 5000);
     });
@@ -185,10 +190,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         socket.emit('user:placeBid', { auctionId: currentAuctionId, amount: bidAmount });
     });
 
-    // If the stateUpdate shows I'm no longer the highest bidder, refund my previous bid
-    socket.on('auction:stateUpdate', (data) => {
+        // Check if my bid was outbid
         if (myActiveBid > 0 && data.highestBidderName !== user.full_name) {
-            // I was outbid — restore my purse display
             purse += myActiveBid;
             myActiveBid = 0;
             myPurseEl.textContent = `₹${purse.toLocaleString('en-IN')}`;
