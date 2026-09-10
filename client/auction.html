@@ -5,98 +5,109 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Auction - JPL</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap">
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg jpl-navbar">
     <div class="container-fluid px-4">
-        <a class="navbar-brand" href="dashboard.html"><i class="fas fa-arrow-left me-2"></i> JPL Auction</a>
-        <div class="d-flex align-items-center">
-            <span class="me-4"><span class="live-indicator"></span><span id="auctionMainStatus">Live</span></span>
+        <a class="navbar-brand" href="/"><i class="fas fa-gavel me-2"></i><span class="live-indicator"></span>JPL LIVE AUCTION</a>
+        <div class="d-flex align-items-center gap-3">
+            <span id="auctionMainStatus" class="badge bg-secondary fs-6 px-3 py-2">Waiting...</span>
             <div class="badge bg-primary fs-6 p-2"><i class="fas fa-wallet me-2"></i>₹<span id="myPurse">0</span></div>
         </div>
     </div>
 </nav>
 
+<!-- Auction Waiting State -->
+<div class="container text-center py-5 d-none" id="auctionWaiting">
+    <i class="fas fa-satellite-dish fa-4x text-warning mb-4 opacity-50"></i>
+    <h2 class="text-muted">Waiting for Auction to Start...</h2>
+    <p class="text-muted">The admin will start the auction shortly. Stay tuned!</p>
+</div>
+
+<!-- Main Auction Content -->
 <div class="container-fluid py-4" id="auctionContent">
     <div class="row g-4">
+
         <!-- Player Card -->
-        <div class="col-lg-4 col-md-12">
-            <div class="player-card">
-                <div class="rounded-circle bg-dark border border-warning d-inline-flex justify-content-center align-items-center mb-3" style="width: 120px; height: 120px;">
+        <div class="col-lg-3 col-md-12">
+            <div class="player-card text-center h-100">
+                <div class="rounded-circle bg-dark border border-warning d-inline-flex justify-content-center align-items-center mb-3" style="width:120px;height:120px;">
                     <i class="fas fa-user text-warning fs-1"></i>
                 </div>
-                <h2 id="playerName" class="text-white mb-1">Waiting...</h2>
-                <h5 id="playerRole" class="text-info mb-3">Role</h5>
-                <div class="d-flex justify-content-center gap-3 mb-4 text-muted">
-                    <span><i class="fas fa-book me-1"></i> <span id="playerCourse">-</span></span>
-                    <span><i class="fas fa-calendar me-1"></i> <span id="playerYear">-</span></span>
+                <h2 id="playerName" class="text-white mb-1 fw-bold">---</h2>
+                <span id="playerRole" class="badge bg-primary fs-6 mb-3">---</span>
+                <div class="d-flex justify-content-center gap-3 mb-4 text-muted small">
+                    <span><i class="fas fa-book me-1"></i><span id="playerCourse">-</span></span>
+                    <span><i class="fas fa-calendar me-1"></i><span id="playerYear">-</span></span>
                 </div>
-                <div class="p-3 rounded bg-dark border border-secondary">
+                <div class="p-3 rounded" style="background:rgba(255,255,255,0.05); border:1px solid rgba(245,158,11,0.3);">
                     <p class="mb-1 text-muted text-uppercase small">Base Price</p>
-                    <h3 class="text-warning m-0">₹<span id="playerBasePrice">0</span></h3>
+                    <h3 class="text-warning m-0 fw-bold">₹<span id="playerBasePrice">0</span></h3>
                 </div>
             </div>
         </div>
 
         <!-- Bidding Arena -->
-        <div class="col-lg-5 col-md-12 d-flex flex-column justify-content-center align-items-center">
-            <div class="text-center w-100 mb-5">
-                <p class="text-muted text-uppercase tracking-wide mb-2">Current Bid</p>
-                <h1 class="display-1 fw-bold text-white mb-2">₹<span id="currentBid">0</span></h1>
-                <h4 class="text-warning">By: <span id="highestBidder">None</span></h4>
-            </div>
-            
-            <div class="text-center w-100 mb-5">
-                <p class="text-muted mb-2">Time Left</p>
-                <div class="timer-display" id="timeLeft">00</div>
+        <div class="col-lg-6 col-md-12 d-flex flex-column justify-content-center align-items-center">
+            <div class="text-center w-100 mb-4">
+                <p class="text-muted text-uppercase small fw-bold mb-1 letter-spacing">Current Highest Bid</p>
+                <h1 class="fw-bold text-success mb-1" style="font-size: clamp(2.5rem, 8vw, 5rem);">₹<span id="currentBid">0</span></h1>
+                <h5 class="text-warning">By: <span id="highestBidder" class="text-white">None</span></h5>
             </div>
 
-            <div class="w-100 px-4 position-relative">
-                <button id="btnPlaceBid" class="bid-btn">
-                    Place Bid <i class="fas fa-gavel ms-2"></i><br>
-                    <small class="fs-6 fw-normal">₹<span id="nextBidAmount">0</span></small>
+            <div class="text-center w-100 mb-4">
+                <p class="text-muted mb-1 text-uppercase small fw-bold">Time Left</p>
+                <div class="timer-display" id="timeLeft">00:00</div>
+            </div>
+
+            <div class="w-100 px-3 mb-3">
+                <button id="btnPlaceBid" class="bid-btn w-100" disabled>
+                    <i class="fas fa-gavel me-2"></i>Place Bid
+                    <small class="d-block fs-6 fw-normal mt-1">Next: ₹<span id="nextBidAmount">0</span></small>
                 </button>
             </div>
+            <p class="text-muted small">Your Purse: <span class="text-warning fw-bold">₹<span id="myPurseBottom">0</span></span></p>
         </div>
 
         <!-- Bid History -->
         <div class="col-lg-3 col-md-12">
             <div class="glass-card h-100 d-flex flex-column">
-                <h4 class="mb-4 border-bottom border-secondary pb-2"><i class="fas fa-history me-2"></i>History</h4>
-                <ul id="bidHistoryList" class="list-unstyled flex-grow-1 overflow-auto" style="max-height: 60vh;">
-                    <!-- Bids populated here -->
+                <h5 class="mb-3 pb-2 border-bottom border-secondary"><i class="fas fa-history me-2 text-warning"></i>Live Bid History</h5>
+                <ul id="bidHistoryList" class="list-unstyled flex-grow-1 overflow-auto mb-0" style="max-height:55vh;">
+                    <li class="text-muted text-center py-4"><i class="fas fa-clock d-block mb-2 fs-3 opacity-50"></i>No bids yet</li>
                 </ul>
             </div>
         </div>
+
     </div>
 </div>
 
-<!-- Sold Overlay -->
-<div id="soldOverlay" class="sold-overlay">
-    <div class="sold-text mb-4">SOLD!</div>
-    <h1 id="soldPlayerName" class="text-white mb-2 text-center display-4">Player Name</h1>
-    <h3 class="text-info mb-4">To: <span id="soldTeamName">Team Name</span></h3>
-    <h2 class="text-warning bg-dark p-3 rounded border border-warning">₹<span id="soldPrice">0</span></h2>
+<!-- SOLD Overlay -->
+<div id="soldOverlay" class="sold-overlay d-none">
+    <div class="sold-text">SOLD!</div>
+    <h1 id="soldPlayerName" class="text-white mb-2 text-center display-4 fw-bold">Player Name</h1>
+    <h3 class="text-info mb-4">To: <span id="soldTeamName" class="text-white">Team</span></h3>
+    <h2 class="text-warning border border-warning p-3 rounded">₹<span id="soldPrice">0</span></h2>
 </div>
 
-<!-- Live Toast -->
-<div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
-    <div id="liveToast" class="toast custom-toast hide" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="toast-header bg-transparent text-white border-bottom border-secondary">
-            <strong class="me-auto"><i class="fas fa-bell text-warning me-2"></i>Update</strong>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
-        </div>
-        <div class="toast-body" id="toastMessage">
-            Notification message.
+<!-- Toast -->
+<div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index:1100;">
+    <div id="liveToast" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body fw-bold" id="toastMessage">Notification</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/auction.js"></script>
 </body>
 </html>
