@@ -98,6 +98,63 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
+    // Add Player
+    document.getElementById('btnAddPlayer').addEventListener('click', async () => {
+        const name       = document.getElementById('ap_name').value.trim();
+        const enrollment = document.getElementById('ap_enrollment').value.trim();
+        const role       = document.getElementById('ap_role').value;
+        const course     = document.getElementById('ap_course').value.trim();
+        const year       = document.getElementById('ap_year').value.trim();
+        const base_price = document.getElementById('ap_base_price').value;
+        const alertBox   = document.getElementById('addPlayerAlert');
+
+        if (!name || !enrollment || !role || !course || !year || !base_price) {
+            alertBox.textContent = 'All fields are required.';
+            alertBox.className = 'alert alert-danger';
+            alertBox.classList.remove('d-none');
+            return;
+        }
+
+        try {
+            const res = await fetchWithAuth('/api/admin/players', {
+                method: 'POST',
+                body: JSON.stringify({
+                    name,
+                    enrollment_number: enrollment,
+                    playing_role: role,
+                    course,
+                    year,
+                    base_price
+                })
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                alertBox.textContent = `✅ ${name} added successfully!`;
+                alertBox.className = 'alert alert-success';
+                alertBox.classList.remove('d-none');
+                // Reset form
+                document.getElementById('addPlayerForm').reset();
+                // Refresh player list
+                loadPlayers();
+                // Close modal after 1.5s
+                setTimeout(() => {
+                    bootstrap.Modal.getInstance(document.getElementById('addPlayerModal')).hide();
+                    alertBox.classList.add('d-none');
+                }, 1500);
+            } else {
+                alertBox.textContent = data.message || 'Failed to add player.';
+                alertBox.className = 'alert alert-danger';
+                alertBox.classList.remove('d-none');
+            }
+        } catch (err) {
+            alertBox.textContent = 'Server error. Try again.';
+            alertBox.className = 'alert alert-danger';
+            alertBox.classList.remove('d-none');
+        }
+    });
+
     async function loadStats() {
         try {
             const res = await fetchWithAuth('/api/admin/users');
