@@ -1,17 +1,18 @@
-/* JPL Auction - Main Stylesheet */
+/* JPL Auction - Light Theme with Orange Accents */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  --primary-bg: #111827;
-  --card-bg: #1f2937;
-  --accent-gold: #f59e0b;
-  --secondary-cyan: #06b6d4;
-  --text-main: #f9fafb;
-  --text-muted: #9ca3af;
-  --glass-bg: #1f2937;
-  --glass-border: #374151;
+  --primary-bg: #f8f9fa;
+  --card-bg: #ffffff;
+  --accent-orange: #f97316;
+  --accent-orange-dark: #ea580c;
+  --accent-orange-light: #fff7ed;
+  --text-main: #111827;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
   --danger-red: #ef4444;
   --success-green: #10b981;
+  --info-blue: #3b82f6;
 }
 
 * { box-sizing: border-box; }
@@ -28,77 +29,93 @@ body {
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--primary-bg); }
-::-webkit-scrollbar-thumb { background: #374151; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
+::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-orange); }
 
 /* ===== NAVBAR ===== */
 .jpl-navbar {
-  background: #0d1117;
-  border-bottom: 1px solid #374151;
+  background: #ffffff;
+  border-bottom: 2px solid var(--accent-orange);
   padding: 12px 0;
+  box-shadow: 0 2px 12px rgba(249,115,22,0.1);
 }
 .jpl-navbar .navbar-brand {
-  color: var(--accent-gold) !important;
-  font-weight: 700;
-  font-size: 1.4rem;
+  color: var(--accent-orange) !important;
+  font-weight: 800;
+  font-size: 1.5rem;
 }
 .jpl-navbar .nav-link {
-  color: #d1d5db !important;
+  color: var(--text-main) !important;
+  font-weight: 500;
   transition: color 0.2s;
 }
-.jpl-navbar .nav-link:hover { color: var(--accent-gold) !important; }
+.jpl-navbar .nav-link:hover { color: var(--accent-orange) !important; }
+.navbar-toggler { border-color: var(--accent-orange); }
 
-/* ===== GLASS CARD ===== */
+/* ===== CARDS ===== */
 .glass-card {
   background: var(--card-bg);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 24px;
   color: var(--text-main);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.07);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 .glass-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  box-shadow: 0 6px 20px rgba(249,115,22,0.12);
 }
-.glass-card h4, .glass-card h5, .glass-card p { color: var(--text-main); }
+.glass-card h4, .glass-card h5 { color: var(--text-main); }
 .glass-card .text-muted { color: var(--text-muted) !important; }
 
 /* ===== STAT CARDS ===== */
 .stat-card {
   background: var(--card-bg);
-  border: 1px solid var(--glass-border);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 24px;
   color: var(--text-main);
-  transition: transform 0.2s;
+  box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
 }
-.stat-card:hover { transform: translateY(-3px); }
-.stat-card h5 { color: var(--text-muted) !important; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; }
-.stat-card h2 { font-weight: 700; margin: 8px 0 0; }
-.stat-card .stat-icon { font-size: 1.8rem; margin-bottom: 10px; opacity: 0.7; }
-.stat-card-blue  { border-left: 4px solid var(--secondary-cyan); }
-.stat-card-red   { border-left: 4px solid var(--danger-red); }
-.stat-card-green { border-left: 4px solid var(--success-green); }
-.stat-card-gold  { border-left: 4px solid var(--accent-gold); }
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(249,115,22,0.12);
+}
+.stat-card h5 {
+  color: var(--text-muted) !important;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.stat-card h2 { font-weight: 700; color: var(--text-main); }
+.stat-card .stat-icon { font-size: 1.8rem; margin-bottom: 10px; opacity: 0.8; }
+.stat-card-blue  { border-top: 4px solid var(--info-blue); }
+.stat-card-red   { border-top: 4px solid var(--danger-red); }
+.stat-card-green { border-top: 4px solid var(--success-green); }
+.stat-card-gold  { border-top: 4px solid var(--accent-orange); }
 
 /* ===== BUTTONS ===== */
-.btn-gold {
-  background: var(--accent-gold);
-  color: #111 !important;
+.btn-gold, .btn-orange {
+  background: var(--accent-orange);
+  color: #fff !important;
   font-weight: 700;
   border: none;
   border-radius: 8px;
+  padding: 10px 24px;
   transition: all 0.2s;
 }
-.btn-gold:hover {
-  background: #d97706;
-  color: #111 !important;
+.btn-gold:hover, .btn-orange:hover {
+  background: var(--accent-orange-dark);
+  color: #fff !important;
   transform: scale(1.03);
+  box-shadow: 0 4px 14px rgba(249,115,22,0.35);
 }
 
 .bid-btn {
-  background: linear-gradient(135deg, #10b981, #059669);
+  background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-dark));
   color: #fff !important;
   font-size: 1.3rem;
   font-weight: 700;
@@ -108,15 +125,16 @@ body {
   width: 100%;
   cursor: pointer;
   transition: all 0.2s;
-  box-shadow: 0 4px 15px rgba(16,185,129,0.3);
+  box-shadow: 0 4px 15px rgba(249,115,22,0.35);
 }
 .bid-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--accent-orange-dark), #c2410c);
   transform: scale(1.02);
-  box-shadow: 0 6px 20px rgba(16,185,129,0.5);
+  box-shadow: 0 6px 20px rgba(249,115,22,0.5);
 }
 .bid-btn:disabled {
-  background: #374151;
-  color: #6b7280 !important;
+  background: #e5e7eb;
+  color: #9ca3af !important;
   cursor: not-allowed;
   box-shadow: none;
 }
@@ -126,7 +144,7 @@ body {
   font-size: 4rem;
   font-weight: 800;
   color: var(--danger-red);
-  text-shadow: 0 0 12px rgba(239,68,68,0.5);
+  text-shadow: 0 0 10px rgba(239,68,68,0.2);
   font-family: 'Courier New', monospace;
   animation: pulsetime 1s infinite;
 }
@@ -135,35 +153,45 @@ body {
   50% { opacity: 0.6; }
 }
 
+/* ===== AUCTION PAGE BODY ===== */
+body.auction-page {
+  background: #fff7ed;
+}
+
 /* ===== PLAYER CARD (Auction) ===== */
 .player-card {
   background: var(--card-bg);
-  border: 2px solid #374151;
+  border: 2px solid var(--border-color);
   border-radius: 16px;
   padding: 28px;
   text-align: center;
-  transition: border-color 0.3s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
-.player-card:hover { border-color: var(--accent-gold); }
+.player-card:hover {
+  border-color: var(--accent-orange);
+  box-shadow: 0 4px 20px rgba(249,115,22,0.15);
+}
 
 /* ===== SOLD OVERLAY ===== */
 .sold-overlay {
   position: fixed;
   top: 0; left: 0;
   width: 100vw; height: 100vh;
-  background: rgba(0,0,0,0.88);
+  background: rgba(0,0,0,0.80);
   z-index: 9999;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 .sold-overlay.d-none { display: none !important; }
+.sold-overlay:not(.d-none) { display: flex !important; }
 .sold-text {
   font-size: clamp(4rem, 12vw, 9rem);
   font-weight: 800;
-  color: var(--accent-gold);
+  color: var(--accent-orange);
   letter-spacing: 8px;
-  text-shadow: 0 0 40px rgba(245,158,11,0.8);
+  text-shadow: 0 0 40px rgba(249,115,22,0.8);
   animation: stamp 0.5s ease-out;
 }
 @keyframes stamp {
@@ -193,16 +221,16 @@ body {
 }
 .split-left {
   flex: 1;
-  background: linear-gradient(160deg, #0d1117 0%, #1a2744 100%);
+  background: linear-gradient(160deg, var(--accent-orange) 0%, var(--accent-orange-dark) 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 60px 40px;
   text-align: center;
-  border-right: 1px solid #374151;
 }
-.split-left h2, .split-left p { color: #d1d5db; }
+.split-left h1, .split-left h2 { color: #fff; }
+.split-left p { color: rgba(255,255,255,0.85); }
 .split-right {
   flex: 1;
   display: flex;
@@ -218,85 +246,101 @@ body {
 
 /* ===== FORMS ===== */
 .form-control, .form-select {
-  background: #1f2937 !important;
-  border: 1px solid #374151 !important;
-  color: #f9fafb !important;
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  color: var(--text-main) !important;
   border-radius: 8px;
 }
-.form-control::placeholder { color: #6b7280 !important; }
+.form-control::placeholder { color: #9ca3af !important; }
 .form-control:focus, .form-select:focus {
-  border-color: var(--accent-gold) !important;
-  box-shadow: 0 0 0 2px rgba(245,158,11,0.2) !important;
-  background: #1f2937 !important;
-  color: #f9fafb !important;
+  border-color: var(--accent-orange) !important;
+  box-shadow: 0 0 0 3px rgba(249,115,22,0.15) !important;
+  background: #ffffff !important;
+  color: var(--text-main) !important;
 }
-.form-label { color: #9ca3af; font-size: 0.85rem; font-weight: 500; }
+.form-label { color: #374151; font-size: 0.85rem; font-weight: 600; }
 .input-group-text {
-  background: #1f2937 !important;
-  border: 1px solid #374151 !important;
-  color: #9ca3af !important;
+  background: #f9fafb !important;
+  border: 1px solid #d1d5db !important;
+  color: #6b7280 !important;
 }
 
-/* ===== ROLE SELECTOR ===== */
+/* ===== ROLE SELECTOR (Register) ===== */
 .role-card {
-  background: #1f2937;
-  border: 2px solid #374151;
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
   border-radius: 12px;
   padding: 20px 12px;
   text-align: center;
   cursor: pointer;
   transition: all 0.2s;
-  color: #d1d5db;
+  color: var(--text-main);
 }
 .role-card:hover {
-  border-color: var(--accent-gold);
-  background: rgba(245,158,11,0.08);
+  border-color: var(--accent-orange);
+  background: var(--accent-orange-light);
 }
 .role-card.active {
-  border-color: var(--accent-gold);
-  background: rgba(245,158,11,0.12);
-  color: var(--text-main);
+  border-color: var(--accent-orange);
+  background: var(--accent-orange-light);
+  color: var(--accent-orange-dark);
 }
 .role-icon {
   font-size: 2rem;
-  color: var(--accent-gold);
+  color: var(--accent-orange);
   display: block;
   margin-bottom: 8px;
 }
 
 /* ===== HERO (Landing Page) ===== */
 .hero-gradient {
-  background: linear-gradient(160deg, #0d1117 0%, #1a2744 60%, #111827 100%);
+  background: linear-gradient(160deg, #fff7ed 0%, #ffedd5 60%, #fed7aa 100%);
   min-height: 100vh;
 }
 
-/* ===== BID HISTORY ITEMS ===== */
+/* ===== BID HISTORY ===== */
 .bid-item {
-  background: #1f2937;
-  border: 1px solid #374151;
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
   border-radius: 8px;
   padding: 10px 14px;
   margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  color: #f9fafb;
+  color: var(--text-main);
 }
-.bid-item .bidder-name { font-weight: 600; color: #e5e7eb; }
-.bid-item .bid-amount { color: var(--success-green); font-weight: 700; }
+.bid-item .bidder-name { font-weight: 600; color: var(--text-main); }
+.bid-item .bid-amount { color: var(--accent-orange-dark); font-weight: 700; }
+
+/* ===== ADMIN PANEL ===== */
+.admin-sidebar {
+  background: #ffffff;
+  border-right: 1px solid var(--border-color);
+  min-height: 100vh;
+}
+
+/* ===== BADGES & ALERTS ===== */
+.badge { font-weight: 600; }
 
 /* ===== MOBILE FIXES ===== */
 @media (max-width: 768px) {
   .timer-display { font-size: 2.5rem; }
-  .stat-card { margin-bottom: 12px; }
   .bid-btn { font-size: 1.1rem; padding: 14px; }
   .sold-text { font-size: 4rem; }
   .glass-card { padding: 16px; }
+  .stat-card { margin-bottom: 12px; }
 }
 
-/* Text color overrides for dark background */
+/* ===== TEXT OVERRIDES ===== */
 h1, h2, h3, h4, h5, h6 { color: var(--text-main); }
-p { color: #d1d5db; }
+p { color: #374151; }
 .text-muted { color: var(--text-muted) !important; }
-a { color: var(--accent-gold); }
-a:hover { color: #d97706; }
+a { color: var(--accent-orange); }
+a:hover { color: var(--accent-orange-dark); }
+small { color: var(--text-muted); }
+
+/* Orange highlight for important text */
+.text-orange { color: var(--accent-orange) !important; }
+.bg-orange { background: var(--accent-orange) !important; }
+.border-orange { border-color: var(--accent-orange) !important; }
