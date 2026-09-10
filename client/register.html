@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - JPL Auction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/">JPL Auction</a>
+        </div>
+    </nav>
+
+    <div class="container auth-wrapper">
+        <div class="card auth-card w-100">
+            <div class="card-body p-5">
+                <h2 class="text-center mb-4">Register for JPL</h2>
+                <div id="registerAlert" class="alert d-none"></div>
+                <form id="registerForm">
+                    <div class="mb-3">
+                        <label for="full_name" class="form-label">Full Name</label>
+                        <input type="text" class="form-control" id="full_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="enrollment_number" class="form-label">Enrollment Number</label>
+                        <input type="text" class="form-control" id="enrollment_number" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">College Email</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mobile" class="form-label">Mobile Number</label>
+                        <input type="text" class="form-control" id="mobile" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Register As</label>
+                        <select class="form-select" id="role" required>
+                            <option value="user">Team Captain (Bidder)</option>
+                            <option value="player">Player</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Player specific fields (Hidden by default) -->
+                    <div id="playerFields" class="d-none bg-light p-3 border rounded mb-3">
+                        <h5 class="mb-3">Player Details</h5>
+                        <div class="mb-3">
+                            <label for="playing_role" class="form-label">Playing Role</label>
+                            <select class="form-select" id="playing_role">
+                                <option value="Batsman">Batsman</option>
+                                <option value="Bowler">Bowler</option>
+                                <option value="All-Rounder">All-Rounder</option>
+                                <option value="Wicket Keeper">Wicket Keeper</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="course" class="form-label">Course</label>
+                            <input type="text" class="form-control" id="course" placeholder="e.g. BTech, BCA">
+                        </div>
+                        <div class="mb-3">
+                            <label for="year" class="form-label">Year</label>
+                            <input type="text" class="form-control" id="year" placeholder="e.g. 1st, 2nd, 3rd, 4th">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="confirm_password" class="form-label">Confirm Password</label>
+                        <input type="password" class="form-control" id="confirm_password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 py-2">Register</button>
+                </form>
+                <div class="mt-4 text-center">
+                    <p>Already have an account? <a href="/login">Login here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/auth.js"></script>
+</body>
+</html>

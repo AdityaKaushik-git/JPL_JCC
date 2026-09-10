@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Auction - JPL</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Add Confetti for SOLD animation -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</head>
+<body class="bg-dark text-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-secondary">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand fw-bold" href="/"><span class="live-indicator"></span>JPL LIVE AUCTION</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto" id="nav-links">
+                    <!-- Populated by JS -->
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Global Toast Notification -->
+    <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 1050">
+        <div id="liveToast" class="toast align-items-center text-white bg-primary border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold" id="toastMessage">
+                    Notification
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-4">
+        <!-- Auction Status Header -->
+        <div class="row mb-4">
+            <div class="col-12 text-center">
+                <h2 id="auctionMainStatus" class="fw-bold text-uppercase p-3 bg-secondary rounded">Waiting for Auction to Start...</h2>
+            </div>
+        </div>
+
+        <div class="row d-none" id="auctionContent">
+            <!-- Left Column: Player Info -->
+            <div class="col-md-4 mb-4">
+                <div class="card bg-secondary text-light h-100 border-0 shadow">
+                    <div class="card-body text-center">
+                        <img id="playerPhoto" src="https://via.placeholder.com/200" alt="Player" class="player-photo-lg mb-3 shadow">
+                        <h2 id="playerName" class="fw-bold mb-1">Player Name</h2>
+                        <span id="playerRole" class="badge bg-primary fs-6 mb-3">Role</span>
+                        
+                        <div class="d-flex justify-content-between text-start border-top border-light pt-3 mt-2">
+                            <div>
+                                <p class="mb-1"><small class="text-info">Course:</small> <span id="playerCourse" class="fw-bold"></span></p>
+                                <p class="mb-1"><small class="text-info">Year:</small> <span id="playerYear" class="fw-bold"></span></p>
+                            </div>
+                            <div>
+                                <p class="mb-1"><small class="text-info">Base Price:</small></p>
+                                <h4 class="text-warning fw-bold" id="playerBasePrice">₹0</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Middle Column: Bidding Arena -->
+            <div class="col-md-5 mb-4">
+                <div class="card bg-dark border-secondary h-100 shadow">
+                    <div class="card-body text-center d-flex flex-column justify-content-between">
+                        
+                        <div>
+                            <h5 class="text-muted text-uppercase mb-2">Current Highest Bid</h5>
+                            <h1 class="display-3 text-success fw-bold mb-0" id="currentBid">₹0</h1>
+                            <p class="text-info mt-2 fs-5">Highest Bidder: <span id="highestBidder" class="fw-bold text-white">None</span></p>
+                        </div>
+
+                        <div class="my-4 p-3 bg-secondary rounded border border-danger">
+                            <h6 class="text-uppercase text-danger mb-1">Time Left</h6>
+                            <div class="timer-display" id="timeLeft">00:00</div>
+                        </div>
+
+                        <div class="bid-action-area">
+                            <button id="btnPlaceBid" class="btn btn-primary bid-button w-100 mb-3" disabled>
+                                PLACE BID (Next: <span id="nextBidAmount">₹0</span>)
+                            </button>
+                            <p class="text-muted small">Your Purse: <span id="myPurse" class="text-warning fw-bold">₹0</span></p>
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: History & Stats -->
+            <div class="col-md-3 mb-4">
+                <div class="card bg-secondary text-light h-100 border-0 shadow">
+                    <div class="card-header bg-dark border-secondary">
+                        <h5 class="mb-0"><i class="fas fa-list me-2"></i>Live Bid History</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush history-list" id="bidHistoryList">
+                            <!-- Bids will appear here -->
+                            <li class="list-group-item bg-secondary text-light text-center text-muted">No bids yet</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- SOLD overlay -->
+        <div id="soldOverlay" class="position-fixed top-0 start-0 w-100 h-100 bg-dark bg-opacity-75 d-none align-items-center justify-content-center flex-column" style="z-index: 2000;">
+            <h1 class="display-1 fw-bold text-danger mb-4" style="text-shadow: 2px 2px 10px rgba(0,0,0,0.5);">🔨 SOLD!</h1>
+            <h2 id="soldPlayerName" class="text-white mb-2">Player Name</h2>
+            <h3 class="text-warning mb-2">Sold to: <span id="soldTeamName" class="text-white">Team</span></h3>
+            <h2 class="text-success fw-bold">For ₹<span id="soldPrice">0</span></h2>
+        </div>
+        
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/auction.js"></script>
+</body>
+</html>
