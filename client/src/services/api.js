@@ -30,5 +30,7 @@ export const api = {
   getAuctionHistory: ()     => request('/admin/auction-history'),
   getAdminStats:     ()     => request('/admin/stats'),
   addPlayer:         (body) => request('/admin/players',        { method: 'POST', body: JSON.stringify(body) }),
+  deletePlayer:      (id)   => request(/admin/players/,  { method: 'DELETE' }),
 }
+
 

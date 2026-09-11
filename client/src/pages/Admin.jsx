@@ -1,6 +1,6 @@
 ﻿import { useEffect, useState } from 'react'
 import { api } from '../services/api'
-import { Users, History, ClipboardList, UserPlus } from 'lucide-react'
+import { Users, History, ClipboardList, UserPlus, Trash2 } from 'lucide-react'
 import ToastContainer from '../components/Toast'
 import { useToast } from '../hooks/useToast'
 
@@ -48,6 +48,17 @@ export default function Admin() {
       addToast(err.message || 'Failed to add player', 'danger')
     } finally {
       setAdding(false)
+    }
+  }
+
+  async function handleDeletePlayer(id, name) {
+    if (!window.confirm(`Are you sure you want to completely delete ${name} from the database? This cannot be undone.`)) return
+    try {
+      await api.deletePlayer(id)
+      addToast(`${name} was deleted successfully.`, 'success')
+      loadData()
+    } catch (err) {
+      addToast(err.message || 'Failed to delete player', 'danger')
     }
   }
 
@@ -106,7 +117,7 @@ export default function Admin() {
               </div>
               <div className="table-wrap">
                 <table>
-                  <thead><tr><th>Name</th><th>Role</th><th>Course / Year</th><th>Base Price</th><th>Status</th></tr></thead>
+                  <thead><tr><th>Name</th><th>Role</th><th>Course / Year</th><th>Base Price</th><th>Status</th><th style={{ textAlign: 'right' }}>Actions</th></tr></thead>
                   <tbody>
                     {filteredPlayers.map(p => (
                       <tr key={p.id}>
@@ -115,6 +126,16 @@ export default function Admin() {
                         <td><div className="text-medium fw-600">{p.course} • {p.year}</div></td>
                         <td className="fw-800 text-primary">₹{fmt(p.base_price)}</td>
                         <td><span className={`badge ${statusClass[p.status] || 'badge-gray'}`}>{p.status}</span></td>
+                        <td style={{ textAlign: 'right' }}>
+                          <button 
+                            onClick={() => handleDeletePlayer(p.id, p.name)}
+                            className="btn btn-outline btn-sm" 
+                            style={{ color: 'var(--danger)', borderColor: 'var(--danger)', padding: '0.4rem 0.6rem', background: 'transparent' }}
+                            title="Delete Player"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
