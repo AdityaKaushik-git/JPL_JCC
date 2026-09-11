@@ -1,6 +1,8 @@
 ﻿import { useEffect, useState } from 'react'
 import { api } from '../services/api'
-import { Users, History, ClipboardList } from 'lucide-react'
+import { Users, History, ClipboardList, UserPlus } from 'lucide-react'
+import ToastContainer from '../components/Toast'
+import { useToast } from '../hooks/useToast'
 
 function fmt(n) { return Number(n || 0).toLocaleString('en-IN') }
 
@@ -11,23 +13,50 @@ export default function Admin() {
   const [history, setHistory] = useState([])
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
+  
+  const [addForm, setAddForm] = useState({ name: '', playing_role: 'Batsman', course: 'BTech', year: '1st', enrollment_number: '', base_price: '1000' })
+  const [adding, setAdding] = useState(false)
+  const { toasts, addToast, removeToast } = useToast()
 
-  useEffect(() => {
+  function loadData() {
+    setLoading(true)
     Promise.all([
       api.getAdminPlayers().then(d => setPlayers(d.players || [])),
       api.getAdminUsers().then(d => setUsers(d.users || [])),
       api.getAuctionHistory().then(d => setHistory(d.history || [])),
     ]).catch(console.error).finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadData()
   }, [])
 
   const statusClass = { Available: 'badge-success', 'In Auction': 'badge-orange', Sold: 'badge-info', Unsold: 'badge-gray' }
   const roleClass = { user: 'badge-info', player: 'badge-success', admin: 'badge-danger' }
   const filteredPlayers = players.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
 
-  if (loading) return <div className="spinner-wrapper" style={{ minHeight: '60vh' }}><div className="spinner" style={{ width: 48, height: 48 }} /></div>
+  async function handleAddPlayer(e) {
+    e.preventDefault()
+    setAdding(true)
+    try {
+      await api.addPlayer(addForm)
+      addToast('Player added successfully!', 'success')
+      setAddForm({ name: '', playing_role: 'Batsman', course: 'BTech', year: '1st', enrollment_number: '', base_price: '1000' })
+      loadData()
+      setTab('players')
+    } catch (err) {
+      addToast(err.message || 'Failed to add player', 'danger')
+    } finally {
+      setAdding(false)
+    }
+  }
+
+  if (loading && players.length === 0) return <div className="spinner-wrapper" style={{ minHeight: '60vh' }}><div className="spinner" style={{ width: 48, height: 48 }} /></div>
 
   return (
     <div className="page" style={{ maxWidth: 1200 }}>
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      
       <div className="page-header">
         <div>
           <h1 className="fw-800">Admin Control Panel</h1>
@@ -36,11 +65,12 @@ export default function Admin() {
       </div>
 
       <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
-        <div style={{ display: 'flex', gap: '1rem', padding: '1.5rem 2rem', background: 'var(--off-white)', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ display: 'flex', gap: '1rem', padding: '1.5rem 2rem', background: 'var(--off-white)', borderBottom: '1px solid var(--border)', overflowX: 'auto' }}>
           {[
             { id: 'players', icon: <ClipboardList size={20} />, label: 'Player Database' },
             { id: 'users', icon: <Users size={20} />, label: 'Registered Users' },
-            { id: 'history', icon: <History size={20} />, label: 'Auction History' }
+            { id: 'history', icon: <History size={20} />, label: 'Auction History' },
+            { id: 'add', icon: <UserPlus size={20} />, label: 'Add Player' }
           ].map(t => (
             <button 
               key={t.id} 
@@ -58,7 +88,8 @@ export default function Admin() {
                 alignItems: 'center',
                 gap: '0.6rem',
                 fontSize: '1rem',
-                transition: 'all 0.2s'
+                transition: 'all 0.2s',
+                whiteSpace: 'nowrap'
               }}
             >
               {t.icon} {t.label}
@@ -89,6 +120,64 @@ export default function Admin() {
                   </tbody>
                 </table>
               </div>
+            </div>
+          )}
+
+          {tab === 'add' && (
+            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+              <div className="text-center mb-3">
+                <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+                  <div style={{ background: 'var(--primary-bg)', padding: '1rem', borderRadius: '50%' }}>
+                    <UserPlus size={40} color="var(--primary)" />
+                  </div>
+                </div>
+                <h3 className="fw-800" style={{ fontSize: '1.6rem' }}>Add New Player</h3>
+                <p className="text-medium">Manually insert a player into the auction pool</p>
+              </div>
+
+              <form onSubmit={handleAddPlayer} className="card" style={{ boxShadow: 'var(--shadow-sm)' }}>
+                <div className="form-group">
+                  <label className="form-label">Full Name</label>
+                  <input className="form-input" value={addForm.name} onChange={e => setAddForm(f => ({...f, name: e.target.value}))} required placeholder="Player Name" />
+                </div>
+                
+                <div className="grid-2">
+                  <div className="form-group">
+                    <label className="form-label">Playing Role</label>
+                    <select className="form-input" value={addForm.playing_role} onChange={e => setAddForm(f => ({...f, playing_role: e.target.value}))}>
+                      <option>Batsman</option><option>Bowler</option><option>All-Rounder</option><option>Wicket Keeper</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Enrollment Number</label>
+                    <input className="form-input" value={addForm.enrollment_number} onChange={e => setAddForm(f => ({...f, enrollment_number: e.target.value}))} required placeholder="e.g. ENR2024001" />
+                  </div>
+                </div>
+
+                <div className="grid-2">
+                  <div className="form-group">
+                    <label className="form-label">Course</label>
+                    <select className="form-input" value={addForm.course} onChange={e => setAddForm(f => ({...f, course: e.target.value}))}>
+                      <option>BTech</option><option>BCA</option><option>BBA</option><option>MCA</option><option>MBA</option><option>Other</option>
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label className="form-label">Year</label>
+                    <select className="form-input" value={addForm.year} onChange={e => setAddForm(f => ({...f, year: e.target.value}))}>
+                      <option>1st</option><option>2nd</option><option>3rd</option><option>4th</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Base Price (₹)</label>
+                  <input className="form-input" type="number" min="1000" step="500" value={addForm.base_price} onChange={e => setAddForm(f => ({...f, base_price: e.target.value}))} required />
+                </div>
+
+                <button type="submit" className="btn btn-primary btn-full btn-lg mt-2" disabled={adding}>
+                  {adding ? 'Adding Player...' : 'Add Player to Pool'}
+                </button>
+              </form>
             </div>
           )}
 
