@@ -1,113 +1,110 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { useAuth } from '../contexts/AuthContext'
 import { api } from '../services/api'
-
-function fmt(n) { return Number(n || 0).toLocaleString('en-IN') }
+import { useToast } from '../hooks/useToast'
+import ToastContainer from '../components/Toast'
+import { User, Shield, Wallet } from 'lucide-react'
 
 export default function Profile() {
   const { user, updateUser } = useAuth()
-  const [profile, setProfile] = useState(null)
-  const [editing, setEditing] = useState(false)
+  const { toasts, addToast, removeToast } = useToast()
+  
   const [form, setForm] = useState({ full_name: '', mobile: '' })
+  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [msg, setMsg] = useState('')
+  const [editMode, setEditMode] = useState(false)
 
   useEffect(() => {
-    api.getProfile().then(d => {
-      setProfile(d.user)
-      setForm({ full_name: d.user.full_name, mobile: d.user.mobile })
-    }).catch(console.error)
+    api.getProfile()
+      .then(d => setForm({ full_name: d.user.full_name, mobile: d.user.mobile }))
+      .catch(err => addToast('Failed to load profile', 'danger'))
+      .finally(() => setLoading(false))
   }, [])
 
-  async function handleSave() {
+  async function handleSubmit(e) {
+    e.preventDefault()
     setSaving(true)
-    setMsg('')
     try {
-      const d = await api.updateProfile(form)
-      setProfile(d.user)
-      updateUser(d.user)
-      setEditing(false)
-      setMsg('Profile updated!')
+      const data = await api.updateProfile(form)
+      updateUser({ full_name: data.user.full_name })
+      setEditMode(false)
+      addToast('Profile updated successfully', 'success')
     } catch (err) {
-      setMsg(err.message)
+      addToast(err.message, 'danger')
     } finally {
       setSaving(false)
     }
   }
 
-  const roleLabel = { admin: 'Admin', user: 'Team Owner', player: 'Player' }
-  const roleClass = { admin: 'badge-danger', user: 'badge-info', player: 'badge-success' }
-  const initials = (profile?.full_name || user?.full_name || '?').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase()
-
-  if (!profile) return <div className="spinner-wrapper" style={{ minHeight: '60vh' }}><div className="spinner" style={{ width: 48, height: 48 }} /></div>
+  if (loading) return <div className="spinner-wrapper"><div className="spinner" /></div>
 
   return (
-    <div className="page">
+    <div className="page" style={{ maxWidth: 800 }}>
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
+      
       <div className="page-header">
-        <h1>👤 Profile</h1>
+        <h1 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><User size={32} color="var(--primary)" /> Account Settings</h1>
       </div>
 
-      <div style={{ maxWidth: 680 }}>
-        <div className="card mb-2">
-          <div className="flex items-center gap-2 mb-3">
-            <div className="avatar-circle">{initials}</div>
-            <div>
-              <div className="fw-800" style={{ fontSize: '1.3rem' }}>{profile.full_name}</div>
-              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem', alignItems: 'center' }}>
-                <span className={`badge ${roleClass[profile.role]}`}>{roleLabel[profile.role]}</span>
-                <span style={{ color: 'var(--text-light)', fontSize: '0.85rem' }}>{profile.enrollment_number}</span>
-              </div>
-            </div>
-          </div>
-
-          {msg && <div className={`alert ${msg.includes('!') ? 'alert-success' : 'alert-danger'} mb-2`}>{msg}</div>}
-
-          <div className="grid-2" style={{ gap: '1rem 2rem' }}>
-            <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-light)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Full Name</div>
-              {editing
-                ? <input className="form-input mt-1" value={form.full_name} onChange={e => setForm(f => ({ ...f, full_name: e.target.value }))} />
-                : <div className="fw-700 mt-1">{profile.full_name}</div>
-              }
-            </div>
-            <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-light)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Mobile</div>
-              {editing
-                ? <input className="form-input mt-1" value={form.mobile} onChange={e => setForm(f => ({ ...f, mobile: e.target.value }))} />
-                : <div className="fw-700 mt-1">{profile.mobile}</div>
-              }
-            </div>
-            <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-light)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Email</div>
-              <div className="fw-700 mt-1">{profile.email}</div>
-            </div>
-            <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-light)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Enrollment</div>
-              <div className="fw-700 mt-1">{profile.enrollment_number}</div>
-            </div>
-            {profile.role === 'user' && (
-              <div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-light)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Purse</div>
-                <div className="fw-700 text-primary mt-1">₹{fmt(profile.purse)}</div>
-              </div>
-            )}
-            <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-light)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.5px' }}>Joined</div>
-              <div className="fw-700 mt-1">{new Date(profile.created_at).toLocaleDateString('en-IN')}</div>
-            </div>
-          </div>
-
-          <div className="flex gap-2 mt-3">
-            {editing ? (
-              <>
-                <button className="btn btn-primary" onClick={handleSave} disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</button>
-                <button className="btn btn-secondary" onClick={() => { setEditing(false); setMsg('') }}>Cancel</button>
-              </>
-            ) : (
-              <button className="btn btn-outline" onClick={() => setEditing(true)}>✏️ Edit Profile</button>
-            )}
+      <div className="card mb-3" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', padding: '2rem' }}>
+        <div className="avatar-circle" style={{ width: 80, height: 80, fontSize: '2rem' }}>
+          <User size={40} />
+        </div>
+        <div style={{ flex: 1 }}>
+          <h2 className="fw-800 text-dark" style={{ fontSize: '1.5rem', marginBottom: '0.25rem' }}>{user?.full_name}</h2>
+          <div className="flex items-center gap-2">
+            <span className="badge badge-info"><Shield size={12} style={{ marginRight: '0.3rem' }} /> {user?.role.toUpperCase()}</span>
           </div>
         </div>
+        {user?.role === 'user' && (
+          <div style={{ textAlign: 'right', background: 'var(--primary-bg)', padding: '1rem 1.5rem', borderRadius: 'var(--radius)' }}>
+            <div className="text-medium fw-700" style={{ fontSize: '0.8rem', color: 'var(--primary-dark)' }}>PURSE BALANCE</div>
+            <div className="text-primary fw-800" style={{ fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              <Wallet size={20} /> ₹{Number(user?.purse || 0).toLocaleString('en-IN')}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="card">
+        <div className="flex justify-between items-center mb-3 border-bottom pb-2">
+          <h3 className="fw-800 text-dark">Personal Information</h3>
+          {!editMode && <button className="btn btn-outline btn-sm" onClick={() => setEditMode(true)}>Edit Profile</button>}
+        </div>
+
+        {editMode ? (
+          <form onSubmit={handleSubmit}>
+            <div className="grid-2">
+              <div className="form-group">
+                <label className="form-label">Full Name</label>
+                <input className="form-input" value={form.full_name} onChange={e => setForm(f => ({...f, full_name: e.target.value}))} required />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Mobile Number</label>
+                <input className="form-input" value={form.mobile} onChange={e => setForm(f => ({...f, mobile: e.target.value}))} required />
+              </div>
+            </div>
+            <div className="flex gap-2 mt-2">
+              <button className="btn btn-primary" type="submit" disabled={saving}>{saving ? 'Saving...' : 'Save Changes'}</button>
+              <button className="btn btn-ghost" type="button" onClick={() => setEditMode(false)}>Cancel</button>
+            </div>
+          </form>
+        ) : (
+          <div className="grid-2 gap-3">
+            <div>
+              <div className="text-medium fw-700" style={{ fontSize: '0.85rem' }}>FULL NAME</div>
+              <div className="fw-600 text-dark" style={{ fontSize: '1.1rem', marginTop: '0.25rem' }}>{form.full_name}</div>
+            </div>
+            <div>
+              <div className="text-medium fw-700" style={{ fontSize: '0.85rem' }}>MOBILE NUMBER</div>
+              <div className="fw-600 text-dark" style={{ fontSize: '1.1rem', marginTop: '0.25rem' }}>{form.mobile}</div>
+            </div>
+            <div>
+              <div className="text-medium fw-700" style={{ fontSize: '0.85rem' }}>ENROLLMENT NUMBER</div>
+              <div className="fw-600 text-dark" style={{ fontSize: '1.1rem', marginTop: '0.25rem' }}>{user?.enrollment_number}</div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

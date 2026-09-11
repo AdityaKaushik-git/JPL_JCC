@@ -1,5 +1,6 @@
 ﻿import { useEffect, useState } from 'react'
 import { api } from '../services/api'
+import { Users, History, ClipboardList } from 'lucide-react'
 
 function fmt(n) { return Number(n || 0).toLocaleString('en-IN') }
 
@@ -37,9 +38,9 @@ export default function Admin() {
       <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
         <div style={{ display: 'flex', gap: '1rem', padding: '1.5rem 2rem', background: 'var(--off-white)', borderBottom: '1px solid var(--border)' }}>
           {[
-            { id: 'players', icon: '🏏', label: 'Player Database' },
-            { id: 'users', icon: '👥', label: 'Registered Users' },
-            { id: 'history', icon: '📋', label: 'Auction History' }
+            { id: 'players', icon: <ClipboardList size={20} />, label: 'Player Database' },
+            { id: 'users', icon: <Users size={20} />, label: 'Registered Users' },
+            { id: 'history', icon: <History size={20} />, label: 'Auction History' }
           ].map(t => (
             <button 
               key={t.id} 
@@ -55,12 +56,12 @@ export default function Admin() {
                 cursor: 'pointer',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.5rem',
+                gap: '0.6rem',
                 fontSize: '1rem',
                 transition: 'all 0.2s'
               }}
             >
-              <span>{t.icon}</span> {t.label}
+              {t.icon} {t.label}
             </button>
           ))}
         </div>

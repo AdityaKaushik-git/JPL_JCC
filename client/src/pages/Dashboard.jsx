@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { api } from '../services/api'
+import { Wallet, Users, History, Settings, Play, ShieldCheck, Activity, Trophy, Clock } from 'lucide-react'
 
 function fmt(n) { return Number(n || 0).toLocaleString('en-IN') }
 
@@ -36,17 +37,17 @@ export default function Dashboard() {
 
         <div className="quick-actions">
           <Link to="/auction" className="action-card">
-            <div className="action-icon">🎙️</div>
+            <div className="action-icon" style={{ color: 'var(--primary)' }}><Play size={32} /></div>
             <div className="action-title">Live Auction</div>
             <div className="action-desc">Start or manage the active auction</div>
           </Link>
           <Link to="/admin" className="action-card">
-            <div className="action-icon">👥</div>
+            <div className="action-icon" style={{ color: 'var(--info)' }}><Users size={32} /></div>
             <div className="action-title">Manage Players</div>
             <div className="action-desc">Add, edit, or remove players</div>
           </Link>
           <Link to="/admin" className="action-card">
-            <div className="action-icon">📊</div>
+            <div className="action-icon" style={{ color: 'var(--success)' }}><History size={32} /></div>
             <div className="action-title">Auction History</div>
             <div className="action-desc">View completed bids and stats</div>
           </Link>
@@ -93,15 +94,17 @@ export default function Dashboard() {
 
             {p.status === 'Sold' && (
               <div className="alert alert-success mt-3" style={{ fontSize: '1.1rem' }}>
-                🎉 Sold to <strong className="fw-800">{p.bought_by_name}</strong> for <strong className="fw-800">₹{fmt(p.winning_bid)}</strong>
+                <ShieldCheck size={20} style={{ marginRight: '0.5rem' }} /> Sold to <strong className="fw-800" style={{ margin: '0 0.4rem' }}>{p.bought_by_name}</strong> for <strong className="fw-800" style={{ marginLeft: '0.4rem' }}>₹{fmt(p.winning_bid)}</strong>
               </div>
             )}
             
-            <Link to="/auction" className="btn btn-primary btn-full btn-lg mt-3">Watch Live Auction 🎙️</Link>
+            <Link to="/auction" className="btn btn-primary btn-full btn-lg mt-3" style={{ display: 'flex', gap: '0.5rem', justifyContent: 'center' }}>
+              <Play size={20} /> Watch Live Auction
+            </Link>
           </div>
         ) : (
           <div className="card text-center" style={{ padding: '3rem' }}>
-            <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>⏳</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}><Clock size={48} color="var(--text-light)" /></div>
             <h3>Profile Pending</h3>
             <p className="text-medium mt-1">Your player profile is being set up by the admin.</p>
           </div>
@@ -120,29 +123,29 @@ export default function Dashboard() {
     <div className="page">
       <div className="page-header">
         <div>
-          <h1>👋 Welcome, {user?.full_name?.split(' ')[0]}!</h1>
-          <p>Your team owner dashboard</p>
+          <h1>Welcome, {user?.full_name?.split(' ')[0]}</h1>
+          <p>Your franchise management dashboard</p>
         </div>
-        <Link to="/auction" className="btn btn-primary btn-lg">Join Live Auction 🎙️</Link>
+        <Link to="/auction" className="btn btn-primary btn-lg" style={{ display: 'flex', gap: '0.5rem' }}><Play size={20} /> Join Live Auction</Link>
       </div>
 
       <div className="grid-3 mb-3">
         <div className="stat-card">
-          <div className="stat-icon orange">💰</div>
+          <div className="stat-icon orange"><Wallet size={28} /></div>
           <div className="stat-content">
             <div className="stat-label">Purse Remaining</div>
             <div className="stat-value">₹{fmt(remaining)}</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon purple">👥</div>
+          <div className="stat-icon purple"><Users size={28} /></div>
           <div className="stat-content">
             <div className="stat-label">Players Bought</div>
             <div className="stat-value">{data?.playersBought || 0}</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon blue">💸</div>
+          <div className="stat-icon blue"><Activity size={28} /></div>
           <div className="stat-content">
             <div className="stat-label">Total Spent</div>
             <div className="stat-value">₹{fmt(spent)}</div>
@@ -158,7 +161,7 @@ export default function Dashboard() {
           </div>
           <div className="progress-text">
             <span>₹{fmt(spent)} Spent</span>
-            <span>Total: ₹{fmt(TOTAL_BUDGET)}</span>
+            <span>Total Budget: ₹{fmt(TOTAL_BUDGET)}</span>
           </div>
         </div>
       </div>
@@ -167,34 +170,35 @@ export default function Dashboard() {
         <div className="card">
           <div className="card-header">Quick Links</div>
           <div className="flex-col gap-2">
-            <Link to="/my-team" className="btn btn-outline btn-full" style={{ justifyContent: 'flex-start' }}>
-              <span style={{ fontSize: '1.2rem' }}>🏆</span> View My Team
+            <Link to="/my-team" className="btn btn-outline btn-full" style={{ justifyContent: 'flex-start', padding: '1rem', fontSize: '1rem' }}>
+              <Trophy size={20} style={{ marginRight: '0.8rem', color: 'var(--primary)' }} /> View My Team Roster
             </Link>
-            <Link to="/my-bids" className="btn btn-outline btn-full" style={{ justifyContent: 'flex-start' }}>
-              <span style={{ fontSize: '1.2rem' }}>📊</span> Bidding History
+            <Link to="/my-bids" className="btn btn-outline btn-full" style={{ justifyContent: 'flex-start', padding: '1rem', fontSize: '1rem' }}>
+              <History size={20} style={{ marginRight: '0.8rem', color: 'var(--primary)' }} /> Bidding History
             </Link>
-            <Link to="/profile" className="btn btn-outline btn-full" style={{ justifyContent: 'flex-start' }}>
-              <span style={{ fontSize: '1.2rem' }}>👤</span> Account Settings
+            <Link to="/profile" className="btn btn-outline btn-full" style={{ justifyContent: 'flex-start', padding: '1rem', fontSize: '1rem' }}>
+              <Settings size={20} style={{ marginRight: '0.8rem', color: 'var(--primary)' }} /> Account Settings
             </Link>
           </div>
         </div>
 
         <div className="card">
-          <div className="card-header">Recent Bids</div>
+          <div className="card-header">Recent Transactions</div>
           {data?.recentBids?.length > 0 ? (
             <div className="flex-col gap-2">
               {data.recentBids.map((b, i) => (
-                <div key={i} className="flex justify-between items-center" style={{ padding: '0.75rem', background: 'var(--off-white)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
+                <div key={i} className="flex justify-between items-center" style={{ padding: '1rem', background: 'var(--off-white)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}>
                   <div>
                     <div className="fw-700">{b.player_name}</div>
-                    <div className="text-primary fw-800 text-sm">₹{fmt(b.bid_amount)}</div>
+                    <div className="text-primary fw-800 text-sm mt-1">₹{fmt(b.bid_amount)}</div>
                   </div>
                   <span className={`badge ${b.status === 'Won' ? 'badge-success' : 'badge-gray'}`}>{b.status}</span>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center text-medium" style={{ padding: '2rem 0' }}>
+            <div className="text-center text-medium" style={{ padding: '2.5rem 0' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}><History size={32} opacity={0.5} /></div>
               No recent bids found.<br/>Go to the auction to start bidding!
             </div>
           )}

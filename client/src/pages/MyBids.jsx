@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import { api } from '../services/api'
+import { History, BarChart2 } from 'lucide-react'
 
 function fmt(n) { return Number(n || 0).toLocaleString('en-IN') }
 
@@ -22,8 +23,10 @@ export default function MyBids() {
   return (
     <div className="page">
       <div className="page-header">
-        <h1>📊 My Bids</h1>
-        <p>Your complete bidding history</p>
+        <div>
+          <h1 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}><History size={32} color="var(--primary)" /> Bidding History</h1>
+          <p>Your complete auction ledger</p>
+        </div>
       </div>
 
       <div className="admin-tabs mb-3">
@@ -34,7 +37,7 @@ export default function MyBids() {
 
       {filtered.length === 0 ? (
         <div className="empty-state">
-          <div className="empty-icon">📊</div>
+          <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}><BarChart2 size={64} opacity={0.3} /></div>
           <h3>No bids found</h3>
           <p>{filter === 'All' ? 'You haven\'t placed any bids yet.' : `No ${filter.toLowerCase()} bids.`}</p>
         </div>
@@ -45,9 +48,9 @@ export default function MyBids() {
             <tbody>
               {filtered.map(b => (
                 <tr key={b.id}>
-                  <td className="fw-700">{b.player_name}</td>
-                  <td className="text-primary fw-700">₹{fmt(b.bid_amount)}</td>
-                  <td style={{ color: 'var(--text-medium)', fontSize: '0.85rem' }}>{new Date(b.created_at).toLocaleString('en-IN')}</td>
+                  <td className="fw-700 text-dark">{b.player_name}</td>
+                  <td className="text-primary fw-800" style={{ fontSize: '1.1rem' }}>₹{fmt(b.bid_amount)}</td>
+                  <td style={{ color: 'var(--text-medium)', fontSize: '0.9rem', fontWeight: 600 }}>{new Date(b.created_at).toLocaleString('en-IN')}</td>
                   <td><span className={`badge ${b.status === 'Won' ? 'badge-success' : 'badge-gray'}`}>{b.status}</span></td>
                 </tr>
               ))}

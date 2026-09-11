@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { api } from '../services/api'
 import ToastContainer from '../components/Toast'
 import { useToast } from '../hooks/useToast'
+import { Gavel, Pause, Play, CheckCircle, XCircle, Clock, Trophy, AlertCircle, Eye } from 'lucide-react'
 
 function fmt(n) { return Number(n || 0).toLocaleString('en-IN') }
 function pad(n) { return String(n).padStart(2, '0') }
@@ -93,10 +94,10 @@ export default function Auction() {
   const isHighest = state.highestBidderName === user?.full_name
 
   const statusMap = {
-    Live: { label: '🔴 LIVE AUCTION', bg: '#fee2e2', color: '#dc2626' },
-    Paused: { label: '⏸ AUCTION PAUSED', bg: '#fef3c7', color: '#d97706' },
-    Completed: { label: '✅ AUCTION COMPLETED', bg: '#dcfce7', color: '#16a34a' },
-    Pending: { label: '⏳ WAITING FOR NEXT PLAYER', bg: '#e0e7ff', color: '#4338ca' }
+    Live: { label: 'LIVE AUCTION', bg: '#fee2e2', color: '#dc2626', icon: <div style={{width: 10, height: 10, borderRadius: '50%', background: '#dc2626', animation: 'pulse 2s infinite'}} /> },
+    Paused: { label: 'AUCTION PAUSED', bg: '#fef3c7', color: '#d97706', icon: <Pause size={18} /> },
+    Completed: { label: 'AUCTION COMPLETED', bg: '#dcfce7', color: '#16a34a', icon: <CheckCircle size={18} /> },
+    Pending: { label: 'WAITING FOR NEXT PLAYER', bg: '#e0e7ff', color: '#4338ca', icon: <Clock size={18} /> }
   }
   const currentStatus = statusMap[state.status] || statusMap.Pending
 
@@ -107,7 +108,7 @@ export default function Auction() {
       {soldInfo && (
         <div className="sold-overlay" style={{ background: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(8px)' }}>
           <div className="sold-card" style={{ background: 'linear-gradient(135deg, #E85D04, #C44B03)', color: 'white', border: 'none', padding: '4rem' }}>
-            <div className="sold-icon" style={{ fontSize: '5rem', marginBottom: '0' }}>🎉</div>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}><Gavel size={64} color="white" /></div>
             <h2 style={{ fontSize: '3rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '2px', margin: '1rem 0' }}>SOLD!</h2>
             <div style={{ fontSize: '1.8rem', fontWeight: 700 }}>{soldInfo.playerName}</div>
             <div className="sold-price" style={{ color: '#FFD8C4', fontSize: '4.5rem', margin: '1.5rem 0', textShadow: '0 4px 10px rgba(0,0,0,0.3)' }}>₹{fmt(soldInfo.price)}</div>
@@ -118,7 +119,9 @@ export default function Auction() {
 
       {user?.role === 'user' && (
         <div className="flex justify-between items-center mb-3">
-          <h1 className="fw-800 text-dark" style={{ fontSize: '1.8rem' }}>Live Auction Arena</h1>
+          <h1 className="fw-800 text-dark" style={{ fontSize: '1.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Gavel size={28} color="var(--primary)" /> Live Auction Arena
+          </h1>
           <div className="card" style={{ padding: '0.6rem 1.5rem', background: 'var(--primary-bg)', border: '1px solid #FFD8C4', boxShadow: 'none' }}>
             <div style={{ fontSize: '0.8rem', color: 'var(--primary-dark)', fontWeight: 700, textTransform: 'uppercase' }}>Available Purse</div>
             <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--primary)' }}>₹{fmt(purse)}</div>
@@ -130,8 +133,8 @@ export default function Auction() {
         {/* MAIN ARENA */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
-          <div style={{ background: currentStatus.bg, color: currentStatus.color, padding: '1rem', borderRadius: 'var(--radius)', textAlign: 'center', fontWeight: 800, fontSize: '1.2rem', letterSpacing: '1px', boxShadow: 'var(--shadow-sm)' }}>
-            {currentStatus.label}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', background: currentStatus.bg, color: currentStatus.color, padding: '1rem', borderRadius: 'var(--radius)', fontWeight: 800, fontSize: '1.2rem', letterSpacing: '1px', boxShadow: 'var(--shadow-sm)' }}>
+            {currentStatus.icon} {currentStatus.label}
           </div>
 
           {user?.role === 'admin' && (state.status === 'Pending' || state.status === 'Completed') && (
@@ -144,7 +147,7 @@ export default function Auction() {
                     <option key={p.id} value={p.id}>{p.name} — {p.playing_role} (Base: ₹{fmt(p.base_price)})</option>
                   ))}
                 </select>
-                <button className="btn btn-primary" onClick={startAuction} style={{ padding: '0 2rem' }}>Start Bidding</button>
+                <button className="btn btn-primary" onClick={startAuction} style={{ padding: '0 2rem' }}><Play size={18} style={{ marginRight: '0.5rem' }} /> Start Bidding</button>
               </div>
             </div>
           )}
@@ -192,34 +195,42 @@ export default function Auction() {
                       onClick={placeBid} 
                       disabled={!canBid}
                     >
-                      {isHighest ? '👑 YOU ARE THE HIGHEST BIDDER' : `PLACE BID — ₹${fmt(state.nextBid)}`}
+                      {isHighest ? (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
+                          <Trophy size={24} /> YOU ARE THE HIGHEST BIDDER
+                        </div>
+                      ) : (
+                        `PLACE BID — ₹${fmt(state.nextBid)}`
+                      )}
                     </button>
                     {!canBid && !isHighest && state.status === 'Live' && (
-                      <div style={{ marginTop: '0.8rem', color: 'var(--danger)', fontWeight: 600 }}>Insufficient purse or auction not active</div>
+                      <div style={{ marginTop: '0.8rem', color: 'var(--danger)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+                        <AlertCircle size={16} /> Insufficient purse or auction not active
+                      </div>
                     )}
                   </div>
                 )}
 
                 {user?.role === 'admin' && state.status === 'Live' && (
                   <div className="grid-3 mt-3">
-                    <button className="btn btn-secondary btn-lg" onClick={() => socketRef.current?.emit('admin:pauseAuction')}>⏸ Pause</button>
-                    <button className="btn btn-success btn-lg" onClick={() => socketRef.current?.emit('admin:sellPlayer')}>✅ Sell Player</button>
-                    <button className="btn btn-danger btn-lg" onClick={() => socketRef.current?.emit('admin:markUnsold')}>❌ Unsold</button>
+                    <button className="btn btn-secondary btn-lg" onClick={() => socketRef.current?.emit('admin:pauseAuction')}><Pause size={20} /> Pause</button>
+                    <button className="btn btn-success btn-lg" onClick={() => socketRef.current?.emit('admin:sellPlayer')}><CheckCircle size={20} /> Sell Player</button>
+                    <button className="btn btn-danger btn-lg" onClick={() => socketRef.current?.emit('admin:markUnsold')}><XCircle size={20} /> Unsold</button>
                   </div>
                 )}
 
                 {user?.role === 'admin' && state.status === 'Paused' && (
                   <div className="grid-3 mt-3">
-                    <button className="btn btn-primary btn-lg" onClick={() => socketRef.current?.emit('admin:resumeAuction')}>▶️ Resume</button>
-                    <button className="btn btn-success btn-lg" onClick={() => socketRef.current?.emit('admin:sellPlayer')}>✅ Sell Player</button>
-                    <button className="btn btn-danger btn-lg" onClick={() => socketRef.current?.emit('admin:markUnsold')}>❌ Unsold</button>
+                    <button className="btn btn-primary btn-lg" onClick={() => socketRef.current?.emit('admin:resumeAuction')}><Play size={20} /> Resume</button>
+                    <button className="btn btn-success btn-lg" onClick={() => socketRef.current?.emit('admin:sellPlayer')}><CheckCircle size={20} /> Sell Player</button>
+                    <button className="btn btn-danger btn-lg" onClick={() => socketRef.current?.emit('admin:markUnsold')}><XCircle size={20} /> Unsold</button>
                   </div>
                 )}
               </div>
             </div>
           ) : (
             <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '5rem 2rem', background: 'var(--white)', border: '2px dashed var(--border)' }}>
-              <div style={{ fontSize: '5rem', marginBottom: '1rem', opacity: 0.5 }}>🏏</div>
+              <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem', opacity: 0.2 }}><Clock size={80} /></div>
               <h2 className="fw-800 text-dark">The Arena is Empty</h2>
               <p className="text-medium mt-1 text-center" style={{ fontSize: '1.1rem' }}>Waiting for the auctioneer to bring the next player to the stand.</p>
             </div>
@@ -229,21 +240,22 @@ export default function Auction() {
         {/* SIDEBAR LOG */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-            <h3 className="fw-800 mb-3" style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>Live Bid Log</h3>
+            <h3 className="fw-800 mb-3" style={{ fontSize: '1.2rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Activity size={20} color="var(--primary)" /> Live Bid Log
+            </h3>
             <div style={{ flex: 1, overflowY: 'auto', maxHeight: '500px', paddingRight: '0.5rem' }} className="history-list">
               {state.bidHistory?.length > 0 ? (
                 state.bidHistory.map((b, i) => (
                   <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1rem', background: i === 0 ? 'var(--primary-bg)' : 'var(--off-white)', borderRadius: 'var(--radius-sm)', marginBottom: '0.5rem', border: `1px solid ${i === 0 ? '#FFD8C4' : 'var(--border)'}` }}>
                     <div className="flex items-center gap-2">
-                      {i === 0 && <span style={{ fontSize: '1.2rem' }}>🔥</span>}
                       <span style={{ fontWeight: 700, color: i === 0 ? 'var(--primary-dark)' : 'var(--text-dark)' }}>{b.userName}</span>
                     </div>
                     <span style={{ fontWeight: 800, color: i === 0 ? 'var(--primary)' : 'var(--text-medium)' }}>₹{fmt(b.amount)}</span>
                   </div>
                 ))
               ) : (
-                <div style={{ textAlign: 'center', padding: '3rem 1rem', color: 'var(--text-light)', fontWeight: 600 }}>
-                  <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>👀</div>
+                <div style={{ textAlign: 'center', padding: '4rem 1rem', color: 'var(--text-light)', fontWeight: 600 }}>
+                  <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}><Eye size={40} opacity={0.5} /></div>
                   No bids placed yet
                 </div>
               )}
