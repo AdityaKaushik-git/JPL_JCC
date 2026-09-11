@@ -17,8 +17,8 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files
-app.use(express.static(path.join(__dirname, '../client')));
+// Serve the React build output
+app.use(express.static(path.join(__dirname, '../client/dist')));
 
 // Routes
 const authRoutes = require('./routes/authRoutes');
@@ -36,25 +36,9 @@ app.use('/api/users', userRoutes);
 // Socket.IO logic
 require('./sockets/auctionSocket')(io);
 
-// Catch-all route for HTML pages
-app.get('/:page', (req, res) => {
-    const page = req.params.page;
-    const allowedPages = ['login', 'register', 'dashboard', 'auction', 'my-team', 'my-bids', 'profile', 'admin'];
-    
-    if (allowedPages.includes(page)) {
-        res.sendFile(path.join(__dirname, `../client/${page}.html`));
-    } else {
-        res.sendFile(path.join(__dirname, '../client/index.html'));
-    }
-});
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/index.html'));
-});
-
-// Admin sub-pages
-app.get('/admin/:page', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/admin.html'));
+// Catch-all: let React Router handle all non-API routes
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
 const PORT = process.env.PORT || 3000;

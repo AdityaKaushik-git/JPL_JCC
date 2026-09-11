@@ -94,6 +94,11 @@ module.exports = (io) => {
         });
 
         socket.on('user:placeBid', async (data) => {
+            // Only bidders (role: 'user') can place bids — players are not allowed
+            if (socket.user.role === 'player') {
+                return socket.emit('auction:notification', { text: 'Players are not allowed to place bids', type: 'danger' });
+            }
+
             const auctionId = Number(data.auctionId);
             const amount = Number(data.amount);
             

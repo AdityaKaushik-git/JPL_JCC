@@ -103,8 +103,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         nextBidVal = data.nextBid;
         nextBidAmountEl.textContent = `₹${nextBidVal}`;
 
-        // Button State
-        if (data.status === 'Live' && data.timeLeft > 0 && purse >= nextBidVal && data.highestBidderName !== user.full_name) {
+        // Button State — players are not allowed to bid
+        if (user.role === 'player') {
+            btnPlaceBid.disabled = true;
+            btnPlaceBid.title = 'Players are not allowed to place bids';
+        } else if (data.status === 'Live' && data.timeLeft > 0 && purse >= nextBidVal && data.highestBidderName !== user.full_name) {
             btnPlaceBid.disabled = false;
         } else {
             btnPlaceBid.disabled = true;

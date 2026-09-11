@@ -92,7 +92,10 @@ exports.login = async (req, res) => {
     } catch (error) {
         console.error('LOGIN ERROR:', error.message);
         console.error('LOGIN STACK:', error.stack);
-        res.status(500).json({ message: 'Server error', detail: error.message });
+        if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT' || error.code === 'ENOTFOUND') {
+            console.error('DATABASE CONNECTION FAILED — check environment variables on Render');
+        }
+        res.status(500).json({ message: 'Server error. Please try again later.' });
     }
 };
 
