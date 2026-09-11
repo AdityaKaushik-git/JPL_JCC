@@ -65,3 +65,43 @@ exports.deletePlayer = async (req, res) => {
 exports.getAuctionState = async (req, res) => {
     res.json({ message: 'Use sockets for real-time state' });
 };
+
+exports.getPlayers = async (req, res) => {
+    try {
+        const [players] = await pool.query('SELECT * FROM players ORDER BY created_at DESC');
+        res.json({ players });
+    } catch (error) {
+        console.error('GET PLAYERS ERROR:', error.message);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+exports.getStats = async (req, res) => {
+    try {
+        const [[{ total }]] = await pool.query('SELECT COUNT(*) as total FROM players');
+        const [[{ sold }]] = await pool.query("SELECT COUNT(*) as sold FROM players WHERE status = 'Sold'");
+        const [[{ unsold }]] = await pool.query("SELECT COUNT(*) as unsold FROM players WHERE status = 'Unsold'");
+        const [[{ bidders }]] = await pool.query("SELECT COUNT(*) as bidders FROM users WHERE role = 'user'");
+        res.json({ totalPlayers: total, soldPlayers: sold, unsoldPlayers: unsold, activeBidders: bidders });
+    } catch (error) {
+        console.error('GET STATS ERROR:', error.message);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
+exports.getAuctionHistory = async (req, res) => {
+    try {
+        const [history] = await pool.query(`
+            SELECT ar.id, p.name as player_name, u.full_name as winner_name,
+                   ar.winning_bid, ar.status, ar.completed_at
+            FROM auction_results ar
+            JOIN players p ON ar.player_id = p.id
+            LEFT JOIN users u ON u.id = ar.winning_user_id
+            ORDER BY ar.completed_at DESC
+        `);
+        res.json({ history });
+    } catch (error) {
+        console.error('GET AUCTION HISTORY ERROR:', error.message);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
