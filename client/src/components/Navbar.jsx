@@ -48,7 +48,7 @@ export default function Navbar() {
               <Wallet size={18} /> <span>₹{Number(user.purse || 0).toLocaleString('en-IN')}</span>
             </span>
           )}
-          <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-dark)' }}>{user?.full_name}</span>
+          <span className="nav-user-name" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-dark)' }}>{user?.full_name}</span>
           <button className="btn btn-ghost btn-sm" onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <LogOut size={16} /> Logout
           </button>
@@ -61,3 +61,4 @@ export default function Navbar() {
     </nav>
   )
 }
+
