@@ -26,81 +26,128 @@ export default function Admin() {
   if (loading) return <div className="spinner-wrapper" style={{ minHeight: '60vh' }}><div className="spinner" style={{ width: 48, height: 48 }} /></div>
 
   return (
-    <div className="page">
+    <div className="page" style={{ maxWidth: 1200 }}>
       <div className="page-header">
-        <h1>⚙️ Admin Panel</h1>
-        <p>Manage players, users, and auction history</p>
+        <div>
+          <h1 className="fw-800">Admin Control Panel</h1>
+          <p>Database management and system logs</p>
+        </div>
       </div>
 
-      <div className="admin-tabs">
-        {[['players', '🏏 Players'], ['users', '👥 Users'], ['history', '📋 Auction History']].map(([key, label]) => (
-          <button key={key} className={`tab-btn${tab === key ? ' active' : ''}`} onClick={() => setTab(key)}>{label}</button>
-        ))}
+      <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
+        <div style={{ display: 'flex', gap: '1rem', padding: '1.5rem 2rem', background: 'var(--off-white)', borderBottom: '1px solid var(--border)' }}>
+          {[
+            { id: 'players', icon: '🏏', label: 'Player Database' },
+            { id: 'users', icon: '👥', label: 'Registered Users' },
+            { id: 'history', icon: '📋', label: 'Auction History' }
+          ].map(t => (
+            <button 
+              key={t.id} 
+              onClick={() => setTab(t.id)}
+              style={{
+                background: tab === t.id ? 'var(--white)' : 'transparent',
+                border: `1px solid ${tab === t.id ? 'var(--border)' : 'transparent'}`,
+                padding: '0.8rem 1.5rem',
+                borderRadius: 'var(--radius)',
+                fontWeight: 700,
+                color: tab === t.id ? 'var(--primary)' : 'var(--text-medium)',
+                boxShadow: tab === t.id ? 'var(--shadow-sm)' : 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                fontSize: '1rem',
+                transition: 'all 0.2s'
+              }}
+            >
+              <span>{t.icon}</span> {t.label}
+            </button>
+          ))}
+        </div>
+
+        <div style={{ padding: '2rem' }}>
+          {tab === 'players' && (
+            <div>
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="fw-800" style={{ fontSize: '1.4rem' }}>Players ({filteredPlayers.length})</h3>
+                <input className="form-input" placeholder="Search players by name..." value={search} onChange={e => setSearch(e.target.value)} style={{ maxWidth: '350px' }} />
+              </div>
+              <div className="table-wrap">
+                <table>
+                  <thead><tr><th>Name</th><th>Role</th><th>Course / Year</th><th>Base Price</th><th>Status</th></tr></thead>
+                  <tbody>
+                    {filteredPlayers.map(p => (
+                      <tr key={p.id}>
+                        <td className="fw-700" style={{ color: 'var(--text-dark)' }}>{p.name}</td>
+                        <td><span className="badge badge-gray">{p.playing_role}</span></td>
+                        <td><div className="text-medium fw-600">{p.course} • {p.year}</div></td>
+                        <td className="fw-800 text-primary">₹{fmt(p.base_price)}</td>
+                        <td><span className={`badge ${statusClass[p.status] || 'badge-gray'}`}>{p.status}</span></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {tab === 'users' && (
+            <div>
+              <h3 className="fw-800 mb-3" style={{ fontSize: '1.4rem' }}>Users ({users.length})</h3>
+              <div className="table-wrap">
+                <table>
+                  <thead><tr><th>Name</th><th>Enrollment / Email</th><th>Role</th><th>Purse Balance</th></tr></thead>
+                  <tbody>
+                    {users.map(u => (
+                      <tr key={u.id}>
+                        <td>
+                          <div className="fw-800 text-dark">{u.full_name}</div>
+                        </td>
+                        <td>
+                          <div className="fw-600">{u.enrollment_number}</div>
+                          <div className="text-medium" style={{ fontSize: '0.85rem' }}>{u.email}</div>
+                        </td>
+                        <td><span className={`badge ${roleClass[u.role] || 'badge-gray'}`}>{u.role}</span></td>
+                        <td>
+                          {u.role === 'user' ? (
+                            <span className="fw-800" style={{ color: 'var(--success)', fontSize: '1.1rem' }}>₹{fmt(u.purse)}</span>
+                          ) : <span className="text-medium">—</span>}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {tab === 'history' && (
+            <div>
+              <h3 className="fw-800 mb-3" style={{ fontSize: '1.4rem' }}>Auction History</h3>
+              <div className="table-wrap">
+                <table>
+                  <thead><tr><th>Player</th><th>Winner</th><th>Final Bid</th><th>Status</th><th>Date</th></tr></thead>
+                  <tbody>
+                    {history.length === 0 ? (
+                      <tr><td colSpan={5} style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-light)', fontWeight: 600 }}>No auction history recorded yet.</td></tr>
+                    ) : history.map(h => (
+                      <tr key={h.id}>
+                        <td className="fw-800 text-dark">{h.player_name}</td>
+                        <td className="fw-600">{h.winner_name || <span className="text-medium">—</span>}</td>
+                        <td>
+                          {h.winning_bid ? <span className="fw-800 text-primary" style={{ fontSize: '1.1rem' }}>₹{fmt(h.winning_bid)}</span> : <span className="text-medium">—</span>}
+                        </td>
+                        <td><span className={`badge ${h.status === 'Sold' ? 'badge-success' : 'badge-danger'}`}>{h.status}</span></td>
+                        <td className="text-medium fw-600" style={{ fontSize: '0.9rem' }}>{new Date(h.completed_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-
-      {tab === 'players' && (
-        <>
-          <input className="search-input mb-2" placeholder="Search players..." value={search} onChange={e => setSearch(e.target.value)} />
-          <div className="table-wrap">
-            <table>
-              <thead><tr><th>Name</th><th>Role</th><th>Course</th><th>Year</th><th>Base Price</th><th>Status</th></tr></thead>
-              <tbody>
-                {filteredPlayers.map(p => (
-                  <tr key={p.id}>
-                    <td className="fw-700">{p.name}</td>
-                    <td>{p.playing_role}</td>
-                    <td>{p.course}</td>
-                    <td>{p.year}</td>
-                    <td className="text-primary fw-700">₹{fmt(p.base_price)}</td>
-                    <td><span className={`badge ${statusClass[p.status] || 'badge-gray'}`}>{p.status}</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </>
-      )}
-
-      {tab === 'users' && (
-        <div className="table-wrap">
-          <table>
-            <thead><tr><th>Name</th><th>Enrollment</th><th>Email</th><th>Role</th><th>Purse</th></tr></thead>
-            <tbody>
-              {users.map(u => (
-                <tr key={u.id}>
-                  <td className="fw-700">{u.full_name}</td>
-                  <td style={{ color: 'var(--text-medium)' }}>{u.enrollment_number}</td>
-                  <td style={{ color: 'var(--text-medium)' }}>{u.email}</td>
-                  <td><span className={`badge ${roleClass[u.role] || 'badge-gray'}`}>{u.role}</span></td>
-                  <td className="text-primary fw-700">{u.role === 'user' ? `₹${fmt(u.purse)}` : '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {tab === 'history' && (
-        <div className="table-wrap">
-          <table>
-            <thead><tr><th>Player</th><th>Winner</th><th>Final Bid</th><th>Status</th><th>Date</th></tr></thead>
-            <tbody>
-              {history.length === 0
-                ? <tr><td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-light)', padding: '2rem' }}>No auction history yet</td></tr>
-                : history.map(h => (
-                  <tr key={h.id}>
-                    <td className="fw-700">{h.player_name}</td>
-                    <td>{h.winner_name || '—'}</td>
-                    <td className="text-primary fw-700">{h.winning_bid ? `₹${fmt(h.winning_bid)}` : '—'}</td>
-                    <td><span className={`badge ${h.status === 'Sold' ? 'badge-success' : 'badge-gray'}`}>{h.status}</span></td>
-                    <td style={{ color: 'var(--text-medium)', fontSize: '0.85rem' }}>{new Date(h.completed_at).toLocaleDateString('en-IN')}</td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-        </div>
-      )}
     </div>
   )
 }
