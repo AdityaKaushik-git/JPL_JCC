@@ -36,8 +36,8 @@ app.use('/api/users', userRoutes);
 // Socket.IO logic
 require('./sockets/auctionSocket')(io);
 
-// Catch-all: let React Router handle all non-API routes
-app.get('*', (req, res) => {
+// Catch-all: Express 5 requires regex or /{*splat} — regex works in both v4 and v5
+app.get(/(.*)/, (req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
