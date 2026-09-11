@@ -1,4 +1,12 @@
-import React from 'react';
-export default function Toast() {
-  return <div id="toast-container" style={{ position: 'fixed', bottom: 20, right: 20, zIndex: 9999 }}></div>;
+export default function ToastContainer({ toasts, removeToast }) {
+  return (
+    <div className="toast-container">
+      {toasts.map(t => (
+        <div key={t.id} className={`toast toast-${t.type}`} onClick={() => removeToast(t.id)}>
+          <span>{t.message}</span>
+          <span style={{ opacity: 0.5, fontSize: '0.8rem' }}>✕</span>
+        </div>
+      ))}
+    </div>
+  )
 }
