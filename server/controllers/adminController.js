@@ -53,12 +53,38 @@ exports.updatePlayer = async (req, res) => {
 };
 
 exports.deletePlayer = async (req, res) => {
+    const connection = await pool.getConnection();
     try {
-        await pool.query('DELETE FROM players WHERE id=?', [req.params.id]);
+        await connection.beginTransaction();
+        const playerId = req.params.id;
+
+        // 1. Delete from teams
+        await connection.query('DELETE FROM teams WHERE player_id=?', [playerId]);
+
+        // 2. Delete from auction_results
+        await connection.query('DELETE FROM auction_results WHERE player_id=?', [playerId]);
+
+        // 3. Delete bids tied to the player's auctions
+        const [auctions] = await connection.query('SELECT id FROM auctions WHERE player_id=?', [playerId]);
+        if (auctions.length > 0) {
+            const auctionIds = auctions.map(a => a.id);
+            await connection.query('DELETE FROM bids WHERE auction_id IN (?)', [auctionIds]);
+        }
+
+        // 4. Delete auctions
+        await connection.query('DELETE FROM auctions WHERE player_id=?', [playerId]);
+
+        // 5. Delete player
+        await connection.query('DELETE FROM players WHERE id=?', [playerId]);
+
+        await connection.commit();
         res.json({ message: 'Player deleted successfully' });
     } catch (error) {
+        await connection.rollback();
         console.error('DELETE PLAYER ERROR:', error.message);
         res.status(500).json({ message: 'Server error', detail: error.message });
+    } finally {
+        connection.release();
     }
 };
 
@@ -105,5 +131,6 @@ exports.getAuctionHistory = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
 
 
