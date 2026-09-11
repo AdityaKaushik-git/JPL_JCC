@@ -132,7 +132,7 @@ export default function Admin() {
           ))}
         </div>
 
-        <div style={{ padding: '2rem' }}>
+        <div style={{ padding: 'var(--card-padding, 1.5rem)' }}>
           {tab === 'players' && (
             <div>
               <div className="flex justify-between items-center mb-3">
@@ -169,7 +169,7 @@ export default function Admin() {
           )}
 
           {tab === 'add' && (
-            <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+            <div style={{ maxWidth: '700px', margin: '0 auto', width: '100%' }}>
               <div className="text-center mb-3">
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
                   <div style={{ background: 'var(--primary-bg)', padding: '1rem', borderRadius: '50%' }}>
@@ -214,7 +214,7 @@ export default function Admin() {
                 </div>
 
                 {createType === 'player' && (
-                  <div style={{ background: 'var(--primary-bg)', padding: '1.5rem', borderRadius: 'var(--radius-sm)', marginBottom: '1.25rem', border: '1px solid #FFD8C4' }}>
+                  <div style={{ background: 'var(--primary-bg)', padding: 'var(--card-padding, 1.5rem)', borderRadius: 'var(--radius-sm)', marginBottom: '1.25rem', border: '1px solid #FFD8C4' }}>
                     <h4 style={{ marginBottom: '1rem', color: 'var(--primary-dark)', fontSize: '0.9rem', textTransform: 'uppercase' }}>Player Details</h4>
                     <div className="grid-2">
                       <div className="form-group">
@@ -312,3 +312,4 @@ export default function Admin() {
     </div>
   )
 }
+

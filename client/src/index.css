@@ -1,6 +1,7 @@
 ﻿@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
 :root {
+  --card-padding: 2rem;
   --primary: #E85D04;
   --primary-dark: #C44B03;
   --primary-bg: #FFF3ED;
@@ -184,63 +185,57 @@ tr:hover td { background: var(--off-white); }
 }
 
 @media (max-width: 768px) {
+  :root { --card-padding: 1rem; }
   /* Layout Adjustments */
-  .page { padding: 1rem; }
-  .grid-2 { grid-template-columns: 1fr; gap: 1rem; }
-  .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
+  .page { padding: 1rem; width: 100%; overflow-x: hidden; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 1rem; }
+  
+  /* Fix Container Overflows */
+  .card { padding: 1.25rem !important; min-width: 0; }
   
   /* Auth */
   .auth-layout { flex-direction: column; }
-  .auth-panel { padding: 3rem 1.5rem; display: none; }
-  .auth-form-wrap { padding: 1rem; align-items: flex-start; padding-top: 2rem; }
-  .auth-form-card { padding: 1.5rem; box-shadow: none; border: none; }
-  .auth-form-card h2 { font-size: 1.6rem; }
+  .auth-panel { display: none; }
+  .auth-form-wrap { padding: 1rem; padding-top: 2rem; }
+  .auth-form-card { padding: 1.5rem !important; width: 100%; }
   
   /* Navbar */
   .navbar-inner { padding: 0.8rem 1rem; }
   .nav-brand { font-size: 1.2rem; }
-  .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--white); flex-direction: column; padding: 1rem; border-bottom: 1px solid var(--border); box-shadow: var(--shadow-md); }
+  .nav-links { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: var(--white); flex-direction: column; padding: 1rem; border-bottom: 1px solid var(--border); box-shadow: var(--shadow-md); z-index: 1000; }
   .nav-links.open { display: flex; }
-  .nav-right .nav-user-name { display: none; } /* Hide name on small screens */
-  .nav-purse { padding: 0.3rem 0.6rem; font-size: 0.8rem; }
-  .hamburger { display: flex; }
+  .nav-right .nav-user-name { display: none; }
   
   /* Auction */
   .auction-layout { grid-template-columns: 1fr !important; gap: 1rem; }
-  .sold-card { padding: 1.5rem !important; }
-  .sold-card h2 { font-size: 2rem !important; margin: 0.5rem 0 !important; }
-  .sold-price { font-size: 2.5rem !important; margin: 1rem 0 !important; }
-  .player-card-auction { padding: 1rem; }
-  .current-bid { font-size: 2.5rem; }
-  .timer { font-size: 3rem !important; }
+  .sold-card { padding: 1.5rem !important; width: 90%; margin: 0 auto; }
+  .sold-card h2 { font-size: 2rem !important; }
+  .sold-price { font-size: 2rem !important; }
   
-  /* Tables */
-  .table-wrap { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: var(--radius-sm); }
-  th, td { padding: 1rem; white-space: nowrap; }
-
+  /* Tables - FIX OVERFLOW */
+  .table-wrap { width: 100%; max-width: 100vw; overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0; display: block; }
+  table { width: 100%; min-width: 600px; } /* Force table to be scrollable if screen is small */
+  
   /* Admin Tabs */
-  .admin-tabs { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 1rem; -webkit-overflow-scrolling: touch; }
-  .admin-tabs button { white-space: nowrap; font-size: 0.9rem !important; padding: 0.6rem 1rem !important; }
+  .admin-tabs { flex-wrap: nowrap; overflow-x: auto; -webkit-overflow-scrolling: touch; padding: 1rem !important; }
+  .admin-tabs button { padding: 0.6rem 1rem !important; }
   
   /* Dashboard */
-  .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
-  .page-header .btn { width: 100%; justify-content: center; }
+  .page-header { flex-direction: column; align-items: flex-start; gap: 1rem; margin-bottom: 1.5rem; }
+  .page-header .btn { width: 100%; }
 
   /* Landing */
-  .hero { padding: 4rem 1rem !important; }
-  .hero h1 { font-size: 2.5rem !important; letter-spacing: -0.5px !important; }
-  .hero p { font-size: 1rem !important; margin-bottom: 2rem !important; }
-  .hero-btns { flex-direction: column; gap: 1rem; }
-  .hero-btns a { width: 100%; justify-content: center; }
-  .features-section { padding: 3rem 1rem !important; }
-  .stats-strip { padding: 3rem 1rem !important; }
-  .stats-strip div { margin-bottom: 0.5rem; }
+  .hero { padding: 3rem 1rem !important; }
+  .hero h1 { font-size: 2.2rem !important; }
+  .features-section, .stats-strip { padding: 3rem 1rem !important; }
 }
 
 @media (max-width: 480px) {
-  .hero h1 { font-size: 2rem !important; }
-  .stat-card { flex-direction: column; text-align: center; gap: 0.8rem; }
-  .stat-icon { margin: 0 auto; }
-  .stat-value { font-size: 1.5rem; }
+  .hero h1 { font-size: 1.8rem !important; }
+  .stat-card { flex-direction: column; text-align: center; gap: 0.5rem; padding: 1rem !important; }
+  .sold-card h2 { font-size: 1.5rem !important; }
+  .sold-price { font-size: 1.5rem !important; }
 }
+
+
 

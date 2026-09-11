@@ -38,7 +38,7 @@ export default function Register() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--off-white)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '3rem 1.5rem' }}>
-      <div className="card" style={{ width: '100%', maxWidth: 600, padding: '3rem' }}>
+      <div className="card" style={{ width: '100%', maxWidth: 600, padding: 'var(--card-padding, 3rem)' }}>
         <div className="text-center mb-3">
           <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
             <div style={{ background: 'var(--primary-bg)', padding: '1rem', borderRadius: '50%' }}>
@@ -130,3 +130,4 @@ export default function Register() {
     </div>
   )
 }
+
