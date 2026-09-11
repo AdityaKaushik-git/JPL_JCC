@@ -1,4 +1,4 @@
-const pool = require('../config/db');
+﻿const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -33,7 +33,7 @@ exports.register = async (req, res) => {
             if (finalRole === 'player' && player_data) {
                 await connection.query(
                     'INSERT INTO players (name, playing_role, course, year, enrollment_number, base_price) VALUES (?, ?, ?, ?, ?, ?)',
-                    [full_name, player_data.playing_role, player_data.course, player_data.year, enrollment_number, 1000.00]
+                    [full_name, player_data.playing_role, player_data.course, player_data.year, enrollment_number, player_data.base_price ? Number(player_data.base_price) : 1000.00]
                 );
             }
 
@@ -93,7 +93,7 @@ exports.login = async (req, res) => {
         console.error('LOGIN ERROR:', error.message);
         console.error('LOGIN STACK:', error.stack);
         if (error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT' || error.code === 'ENOTFOUND') {
-            console.error('DATABASE CONNECTION FAILED — check environment variables on Render');
+            console.error('DATABASE CONNECTION FAILED â€” check environment variables on Render');
         }
         res.status(500).json({ message: 'Server error. Please try again later.' });
     }
@@ -112,3 +112,4 @@ exports.getMe = async (req, res) => {
         res.status(500).json({ message: 'Server error', detail: error.message });
     }
 };
+

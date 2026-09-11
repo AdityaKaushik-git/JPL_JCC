@@ -14,7 +14,11 @@ export default function Admin() {
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
   
-  const [addForm, setAddForm] = useState({ name: '', playing_role: 'Batsman', course: 'BTech', year: '1st', enrollment_number: '', base_price: '1000' })
+  const [createType, setCreateType] = useState('player')
+  const [addForm, setAddForm] = useState({ 
+    full_name: '', enrollment_number: '', email: '', mobile: '', password: '',
+    playing_role: 'Batsman', course: 'BTech', year: '1st', base_price: '1000' 
+  })
   const [adding, setAdding] = useState(false)
   const { toasts, addToast, removeToast } = useToast()
 
@@ -35,17 +39,37 @@ export default function Admin() {
   const roleClass = { user: 'badge-info', player: 'badge-success', admin: 'badge-danger' }
   const filteredPlayers = players.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
 
-  async function handleAddPlayer(e) {
+  function set(field) { return e => setAddForm(f => ({ ...f, [field]: e.target.value })) }
+
+  async function handleCreateAccount(e) {
     e.preventDefault()
     setAdding(true)
     try {
-      await api.addPlayer(addForm)
-      addToast('Player added successfully!', 'success')
-      setAddForm({ name: '', playing_role: 'Batsman', course: 'BTech', year: '1st', enrollment_number: '', base_price: '1000' })
+      const payload = {
+        full_name: addForm.full_name,
+        enrollment_number: addForm.enrollment_number,
+        email: addForm.email,
+        mobile: addForm.mobile,
+        password: addForm.password,
+        role: createType,
+      }
+      
+      if (createType === 'player') {
+        payload.player_data = {
+          playing_role: addForm.playing_role,
+          course: addForm.course,
+          year: addForm.year,
+          base_price: addForm.base_price
+        }
+      }
+
+      await api.register(payload)
+      addToast(`${createType === 'player' ? 'Player' : 'Bidder'} account created successfully!`, 'success')
+      setAddForm({ full_name: '', enrollment_number: '', email: '', mobile: '', password: '', playing_role: 'Batsman', course: 'BTech', year: '1st', base_price: '1000' })
       loadData()
-      setTab('players')
+      setTab(createType === 'player' ? 'players' : 'users')
     } catch (err) {
-      addToast(err.message || 'Failed to add player', 'danger')
+      addToast(err.message || 'Failed to create account', 'danger')
     } finally {
       setAdding(false)
     }
@@ -76,12 +100,12 @@ export default function Admin() {
       </div>
 
       <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
-        <div style={{ display: 'flex', gap: '1rem', padding: '1.5rem 2rem', background: 'var(--off-white)', borderBottom: '1px solid var(--border)', overflowX: 'auto' }}>
+        <div className="admin-tabs" style={{ display: 'flex', gap: '1rem', padding: '1.5rem 2rem', background: 'var(--off-white)', borderBottom: '1px solid var(--border)' }}>
           {[
             { id: 'players', icon: <ClipboardList size={20} />, label: 'Player Database' },
             { id: 'users', icon: <Users size={20} />, label: 'Registered Users' },
             { id: 'history', icon: <History size={20} />, label: 'Auction History' },
-            { id: 'add', icon: <UserPlus size={20} />, label: 'Add Player' }
+            { id: 'add', icon: <UserPlus size={20} />, label: 'Create Account' }
           ].map(t => (
             <button 
               key={t.id} 
@@ -145,58 +169,84 @@ export default function Admin() {
           )}
 
           {tab === 'add' && (
-            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+            <div style={{ maxWidth: '700px', margin: '0 auto' }}>
               <div className="text-center mb-3">
                 <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
                   <div style={{ background: 'var(--primary-bg)', padding: '1rem', borderRadius: '50%' }}>
                     <UserPlus size={40} color="var(--primary)" />
                   </div>
                 </div>
-                <h3 className="fw-800" style={{ fontSize: '1.6rem' }}>Add New Player</h3>
-                <p className="text-medium">Manually insert a player into the auction pool</p>
+                <h3 className="fw-800" style={{ fontSize: '1.6rem' }}>Create New Account</h3>
+                <p className="text-medium">Register a Bidder (Franchise Owner) or a Player</p>
               </div>
 
-              <form onSubmit={handleAddPlayer} className="card" style={{ boxShadow: 'var(--shadow-sm)' }}>
-                <div className="form-group">
-                  <label className="form-label">Full Name</label>
-                  <input className="form-input" value={addForm.name} onChange={e => setAddForm(f => ({...f, name: e.target.value}))} required placeholder="Player Name" />
-                </div>
-                
+              <div className="flex gap-2 mb-3" style={{ background: 'var(--off-white)', padding: '0.5rem', borderRadius: 'var(--radius)' }}>
+                <button className={`btn ${createType === 'player' ? 'btn-primary' : 'btn-ghost'}`} style={{ flex: 1 }} onClick={() => setCreateType('player')}>Create Player</button>
+                <button className={`btn ${createType === 'user' ? 'btn-primary' : 'btn-ghost'}`} style={{ flex: 1 }} onClick={() => setCreateType('user')}>Create Bidder</button>
+              </div>
+
+              <form onSubmit={handleCreateAccount} className="card" style={{ boxShadow: 'var(--shadow-sm)' }}>
                 <div className="grid-2">
                   <div className="form-group">
-                    <label className="form-label">Playing Role</label>
-                    <select className="form-input" value={addForm.playing_role} onChange={e => setAddForm(f => ({...f, playing_role: e.target.value}))}>
-                      <option>Batsman</option><option>Bowler</option><option>All-Rounder</option><option>Wicket Keeper</option>
-                    </select>
+                    <label className="form-label">Full Name</label>
+                    <input className="form-input" value={addForm.full_name} onChange={set('full_name')} required placeholder="e.g. MS Dhoni" />
                   </div>
                   <div className="form-group">
                     <label className="form-label">Enrollment Number</label>
-                    <input className="form-input" value={addForm.enrollment_number} onChange={e => setAddForm(f => ({...f, enrollment_number: e.target.value}))} required placeholder="e.g. ENR2024001" />
+                    <input className="form-input" value={addForm.enrollment_number} onChange={set('enrollment_number')} required placeholder="e.g. ENR2024001" />
                   </div>
                 </div>
 
                 <div className="grid-2">
                   <div className="form-group">
-                    <label className="form-label">Course</label>
-                    <select className="form-input" value={addForm.course} onChange={e => setAddForm(f => ({...f, course: e.target.value}))}>
-                      <option>BTech</option><option>BCA</option><option>BBA</option><option>MCA</option><option>MBA</option><option>Other</option>
-                    </select>
+                    <label className="form-label">Email Address</label>
+                    <input className="form-input" type="email" value={addForm.email} onChange={set('email')} required placeholder="user@example.com" />
                   </div>
                   <div className="form-group">
-                    <label className="form-label">Year</label>
-                    <select className="form-input" value={addForm.year} onChange={e => setAddForm(f => ({...f, year: e.target.value}))}>
-                      <option>1st</option><option>2nd</option><option>3rd</option><option>4th</option>
-                    </select>
+                    <label className="form-label">Mobile Number</label>
+                    <input className="form-input" type="tel" value={addForm.mobile} onChange={set('mobile')} required placeholder="10-digit mobile" />
                   </div>
                 </div>
-
+                
                 <div className="form-group">
-                  <label className="form-label">Base Price (₹)</label>
-                  <input className="form-input" type="number" min="1000" step="500" value={addForm.base_price} onChange={e => setAddForm(f => ({...f, base_price: e.target.value}))} required />
+                  <label className="form-label">Password</label>
+                  <input className="form-input" type="password" value={addForm.password} onChange={set('password')} required placeholder="Set a secure password" />
                 </div>
 
+                {createType === 'player' && (
+                  <div style={{ background: 'var(--primary-bg)', padding: '1.5rem', borderRadius: 'var(--radius-sm)', marginBottom: '1.25rem', border: '1px solid #FFD8C4' }}>
+                    <h4 style={{ marginBottom: '1rem', color: 'var(--primary-dark)', fontSize: '0.9rem', textTransform: 'uppercase' }}>Player Details</h4>
+                    <div className="grid-2">
+                      <div className="form-group">
+                        <label className="form-label" style={{ color: 'var(--primary-dark)' }}>Playing Role</label>
+                        <select className="form-input" value={addForm.playing_role} onChange={set('playing_role')}>
+                          <option>Batsman</option><option>Bowler</option><option>All-Rounder</option><option>Wicket Keeper</option>
+                        </select>
+                      </div>
+                      <div className="form-group">
+                        <label className="form-label" style={{ color: 'var(--primary-dark)' }}>Base Price (₹)</label>
+                        <input className="form-input" type="number" min="1000" step="500" value={addForm.base_price} onChange={set('base_price')} required />
+                      </div>
+                    </div>
+                    <div className="grid-2" style={{ marginBottom: 0 }}>
+                      <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label className="form-label" style={{ color: 'var(--primary-dark)' }}>Course</label>
+                        <select className="form-input" value={addForm.course} onChange={set('course')}>
+                          <option>BTech</option><option>BCA</option><option>BBA</option><option>MCA</option><option>MBA</option><option>Other</option>
+                        </select>
+                      </div>
+                      <div className="form-group" style={{ marginBottom: 0 }}>
+                        <label className="form-label" style={{ color: 'var(--primary-dark)' }}>Year</label>
+                        <select className="form-input" value={addForm.year} onChange={set('year')}>
+                          <option>1st</option><option>2nd</option><option>3rd</option><option>4th</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <button type="submit" className="btn btn-primary btn-full btn-lg mt-2" disabled={adding}>
-                  {adding ? 'Adding Player...' : 'Add Player to Pool'}
+                  {adding ? 'Processing...' : `Register ${createType === 'player' ? 'Player' : 'Bidder'} Account`}
                 </button>
               </form>
             </div>
