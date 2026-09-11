@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { api } from '../services/api'
 import ToastContainer from '../components/Toast'
 import { useToast } from '../hooks/useToast'
-import { Gavel, Pause, Play, CheckCircle, XCircle, Clock, Trophy, AlertCircle, Eye } from 'lucide-react'
+import { Gavel, Pause, Play, CheckCircle, XCircle, Clock, Trophy, AlertCircle, Eye, Activity } from 'lucide-react'
 
 function fmt(n) { return Number(n || 0).toLocaleString('en-IN') }
 function pad(n) { return String(n).padStart(2, '0') }
@@ -285,3 +285,4 @@ export default function Auction() {
     </div>
   )
 }
+
