@@ -2,7 +2,7 @@
 
 exports.getStatus = async (req, res) => {
     try {
-        const [auctions] = await pool.query('SELECT * FROM auctions WHERE status IN ('Live', 'Paused') ORDER BY id DESC LIMIT 1');
+        const [auctions] = await pool.query("SELECT * FROM auctions WHERE status IN ('Live', 'Paused') ORDER BY id DESC LIMIT 1");
         if (auctions.length === 0) {
             return res.json({ status: 'Pending' });
         }
@@ -28,4 +28,5 @@ exports.getHistory = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
 

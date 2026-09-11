@@ -2,7 +2,7 @@
 
 exports.getUsers = async (req, res) => {
     try {
-        const [users] = await pool.query('SELECT id, full_name, enrollment_number, email, mobile, role, purse FROM users WHERE role != 'admin'');
+        const [users] = await pool.query("SELECT id, full_name, enrollment_number, email, mobile, role, purse FROM users WHERE role != 'admin'");
         res.json({ users });
     } catch (error) {
         console.error('GET USERS ERROR:', error.message);
@@ -105,4 +105,5 @@ exports.getAuctionHistory = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
 
