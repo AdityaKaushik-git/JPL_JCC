@@ -1,4 +1,4 @@
-﻿const BASE = '/api'
+const BASE = '/api'
 
 function getHeaders() {
   const token = localStorage.getItem('jpl_token')
@@ -28,6 +28,7 @@ export const api = {
   getAdminUsers:     ()     => request('/admin/users'),
   getAdminPlayers:   ()     => request('/admin/players'),
   getAuctionHistory: ()     => request('/admin/auction-history'),
+  deleteAuctionHistory: (id)=> request('/admin/auction-history/' + id, { method: 'DELETE' }),
   getAdminStats:     ()     => request('/admin/stats'),
   addPlayer:         (body) => request('/admin/players',        { method: 'POST', body: JSON.stringify(body) }),
   deletePlayer:      (id)   => request('/admin/players/' + id,  { method: 'DELETE' }),

@@ -9,6 +9,7 @@ router.get('/users', adminController.getUsers);
 router.get('/players', adminController.getPlayers);
 router.get('/stats', adminController.getStats);
 router.get('/auction-history', adminController.getAuctionHistory);
+router.delete('/auction-history/:id', adminController.deleteAuctionHistoryRecord);
 router.post('/players', adminController.addPlayer);
 router.put('/players/:id', adminController.updatePlayer);
 router.delete('/players/:id', adminController.deletePlayer);

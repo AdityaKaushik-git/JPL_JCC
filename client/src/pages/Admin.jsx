@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { api } from '../services/api'
 import { Users, History, ClipboardList, UserPlus, Trash2 } from 'lucide-react'
 import ToastContainer from '../components/Toast'
@@ -83,6 +83,17 @@ export default function Admin() {
       loadData()
     } catch (err) {
       addToast(err.message || 'Failed to delete player', 'danger')
+    }
+  }
+
+  async function handleDeleteHistory(id) {
+    if (!window.confirm('Are you sure you want to delete this auction history record? This will reset the player to Available and refund the winning bidder (if sold).')) return
+    try {
+      await api.deleteAuctionHistory(id)
+      addToast('History record deleted successfully', 'success')
+      loadData()
+    } catch (err) {
+      addToast(err.message || 'Failed to delete history record', 'danger')
     }
   }
 
@@ -287,10 +298,10 @@ export default function Admin() {
               <h3 className="fw-800 mb-3" style={{ fontSize: '1.4rem' }}>Auction History</h3>
               <div className="table-wrap">
                 <table>
-                  <thead><tr><th>Player</th><th>Winner</th><th>Final Bid</th><th>Status</th><th>Date</th></tr></thead>
+                  <thead><tr><th>Player</th><th>Winner</th><th>Final Bid</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
                   <tbody>
                     {history.length === 0 ? (
-                      <tr><td colSpan={5} style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-light)', fontWeight: 600 }}>No auction history recorded yet.</td></tr>
+                      <tr><td colSpan={6} style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-light)', fontWeight: 600 }}>No auction history recorded yet.</td></tr>
                     ) : history.map(h => (
                       <tr key={h.id}>
                         <td className="fw-800 text-dark">{h.player_name}</td>
@@ -300,6 +311,11 @@ export default function Admin() {
                         </td>
                         <td><span className={`badge ${h.status === 'Sold' ? 'badge-success' : 'badge-danger'}`}>{h.status}</span></td>
                         <td className="text-medium fw-600" style={{ fontSize: '0.9rem' }}>{new Date(h.completed_at).toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</td>
+                        <td>
+                          <button onClick={() => handleDeleteHistory(h.id)} className="btn btn-ghost" style={{ padding: '0.4rem', color: 'var(--danger)' }} title="Delete History Record">
+                            <Trash2 size={16} />
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
