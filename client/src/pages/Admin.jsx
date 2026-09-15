@@ -16,7 +16,7 @@ export default function Admin() {
   
   const [createType, setCreateType] = useState('player')
   const [addForm, setAddForm] = useState({ 
-    full_name: '', enrollment_number: '', email: '', mobile: '', password: '',
+    full_name: '', enrollment_number: '', email: '', mobile: '', password: '', team_name: '',
     playing_role: 'Batsman', course: 'BTech', year: '1st', base_price: '1000' 
   })
   const [adding, setAdding] = useState(false)
@@ -52,9 +52,10 @@ export default function Admin() {
         mobile: addForm.mobile,
         password: addForm.password,
         role: createType,
+        team_name: addForm.team_name,
       }
       
-      if (createType === 'player') {
+      if (createType === 'player' || createType === 'user') {
         payload.player_data = {
           playing_role: addForm.playing_role,
           course: addForm.course,
@@ -224,9 +225,16 @@ export default function Admin() {
                   <input className="form-input" type="password" value={addForm.password} onChange={set('password')} required placeholder="Set a secure password" />
                 </div>
 
-                {createType === 'player' && (
+                {createType === 'user' && (
+                  <div className="form-group">
+                    <label className="form-label">Team Name</label>
+                    <input className="form-input" value={addForm.team_name} onChange={set('team_name')} required placeholder="e.g. Chennai Super Kings" />
+                  </div>
+                )}
+
+                {(createType === 'player' || createType === 'user') && (
                   <div style={{ background: 'var(--primary-bg)', padding: 'var(--card-padding, 1.5rem)', borderRadius: 'var(--radius-sm)', marginBottom: '1.25rem', border: '1px solid #FFD8C4' }}>
-                    <h4 style={{ marginBottom: '1rem', color: 'var(--primary-dark)', fontSize: '0.9rem', textTransform: 'uppercase' }}>Player Details</h4>
+                    <h4 style={{ marginBottom: '1rem', color: 'var(--primary-dark)', fontSize: '0.9rem', textTransform: 'uppercase' }}>{createType === 'user' ? 'Captain Details' : 'Player Details'}</h4>
                     <div className="grid-2">
                       <div className="form-group">
                         <label className="form-label" style={{ color: 'var(--primary-dark)' }}>Playing Role</label>
@@ -234,10 +242,12 @@ export default function Admin() {
                           <option>Batsman</option><option>Bowler</option><option>All-Rounder</option><option>Wicket Keeper</option>
                         </select>
                       </div>
-                      <div className="form-group">
-                        <label className="form-label" style={{ color: 'var(--primary-dark)' }}>Base Price (₹)</label>
-                        <input className="form-input" type="number" min="1000" step="500" value={addForm.base_price} onChange={set('base_price')} required />
-                      </div>
+                      {createType === 'player' && (
+                        <div className="form-group">
+                          <label className="form-label" style={{ color: 'var(--primary-dark)' }}>Base Price (₹)</label>
+                          <input className="form-input" type="number" min="1000" step="500" value={addForm.base_price} onChange={set('base_price')} required />
+                        </div>
+                      )}
                     </div>
                     <div className="grid-2" style={{ marginBottom: 0 }}>
                       <div className="form-group" style={{ marginBottom: 0 }}>

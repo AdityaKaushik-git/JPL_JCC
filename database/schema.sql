@@ -7,6 +7,7 @@ CREATE TABLE users (
     mobile VARCHAR(20) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     role ENUM('user', 'admin', 'player') DEFAULT 'user',
+    team_name VARCHAR(100) DEFAULT NULL,
     purse DECIMAL(15,2) DEFAULT 30000000.00,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

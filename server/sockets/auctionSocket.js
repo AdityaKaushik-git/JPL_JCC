@@ -99,6 +99,17 @@ module.exports = (io) => {
                 return socket.emit('auction:notification', { text: 'Players are not allowed to place bids', type: 'danger' });
             }
 
+            // Check if user already has 11 players
+            try {
+                const [teamCountResult] = await pool.query('SELECT COUNT(*) as cnt FROM teams WHERE user_id = ?', [socket.user.id]);
+                if (teamCountResult[0].cnt >= 11) {
+                    return socket.emit('auction:notification', { text: 'You already have the maximum allowed limit of 11 players', type: 'danger' });
+                }
+            } catch (err) {
+                console.error(err);
+                return socket.emit('auction:notification', { text: 'Error checking team limit', type: 'danger' });
+            }
+
             const auctionId = Number(data.auctionId);
             const amount = Number(data.amount);
             

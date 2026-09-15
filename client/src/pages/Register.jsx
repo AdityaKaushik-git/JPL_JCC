@@ -1,11 +1,11 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { api } from '../services/api'
 import { Trophy } from 'lucide-react'
 
 export default function Register() {
   const [form, setForm] = useState({
-    full_name: '', enrollment_number: '', email: '', mobile: '',
+    full_name: '', enrollment_number: '', email: '', mobile: '', team_name: '',
     role: 'user', password: '', confirm_password: '',
   })
   const [playerData, setPlayerData] = useState({ playing_role: 'Batsman', course: 'BTech', year: '1st' })
@@ -25,7 +25,8 @@ export default function Register() {
     try {
       const payload = { ...form }
       delete payload.confirm_password
-      if (form.role === 'player') payload.player_data = playerData
+      if (form.role === 'user') payload.team_name = form.team_name
+      if (form.role === 'player' || form.role === 'user') payload.player_data = playerData
       await api.register(payload)
       setSuccess(true)
       setTimeout(() => navigate('/login'), 2000)
@@ -81,9 +82,16 @@ export default function Register() {
             </select>
           </div>
 
-          {form.role === 'player' && (
+          {form.role === 'user' && (
+            <div className="form-group">
+              <label className="form-label">Team Name</label>
+              <input className="form-input" placeholder="Your Franchise Name" value={form.team_name} onChange={set('team_name')} required />
+            </div>
+          )}
+
+          {(form.role === 'player' || form.role === 'user') && (
             <div style={{ background: 'var(--primary-bg)', padding: '1.5rem', borderRadius: 'var(--radius-sm)', marginBottom: '1.25rem', border: '1px solid #FFD8C4' }}>
-              <h4 style={{ marginBottom: '1rem', color: 'var(--primary-dark)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Player Details</h4>
+              <h4 style={{ marginBottom: '1rem', color: 'var(--primary-dark)', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>{form.role === 'user' ? 'Captain Details' : 'Player Details'}</h4>
               <div className="form-group">
                 <label className="form-label" style={{ color: 'var(--primary-dark)' }}>Playing Role</label>
                 <select className="form-input" value={playerData.playing_role} onChange={setP('playing_role')}>
