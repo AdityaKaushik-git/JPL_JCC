@@ -144,7 +144,7 @@ export default function Auction() {
                 <select className="form-input" value={selectedPlayerId} onChange={e => setSelectedPlayerId(e.target.value)} style={{ flex: 1, fontSize: '1rem' }}>
                   <option value="">Select a player from the pool...</option>
                   {availablePlayers.map(p => (
-                    <option key={p.id} value={p.id}>{p.name} — {p.playing_role} (Base: ₹{fmt(p.base_price)})</option>
+                    <option key={p.id} value={p.id}>{p.name} ({p.enrollment_number}) — {p.playing_role} (Base: ₹{fmt(p.base_price)})</option>
                   ))}
                 </select>
                 <button className="btn btn-primary" onClick={startAuction} style={{ padding: '0 2rem' }}><Play size={18} style={{ marginRight: '0.5rem' }} /> Start Bidding</button>
@@ -156,7 +156,8 @@ export default function Auction() {
             <div className="card" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', flex: 1 }}>
               <div style={{ background: 'linear-gradient(135deg, #1E293B, #0F172A)', color: 'white', padding: 'clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem)', textAlign: 'center', position: 'relative' }}>
                 <div style={{ fontSize: 'clamp(1.4rem, 5vw, 2.8rem)', fontWeight: 900, marginBottom: '0.5rem', letterSpacing: '-0.5px' }}>{state.player.name}</div>
-                <div className="flex justify-center gap-2 mb-3">
+                <div className="flex justify-center flex-wrap gap-2 mb-3">
+                  <span className="badge" style={{ background: 'rgba(255,255,255,0.1)', color: '#FFD8C4', border: '1px solid rgba(255,255,255,0.2)' }}>{state.player.enrollment_number}</span>
                   <span className="badge" style={{ background: 'rgba(255,255,255,0.1)', color: '#A7F3D0', border: '1px solid rgba(255,255,255,0.2)' }}>{state.player.playing_role}</span>
                   <span className="badge" style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)' }}>{state.player.course} • {state.player.year} Year</span>
                 </div>

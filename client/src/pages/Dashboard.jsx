@@ -120,6 +120,10 @@ export default function Dashboard() {
             
             <div className="grid-2 mt-2">
               <div className="card" style={{ background: 'var(--off-white)', padding: '1rem', boxShadow: 'none' }}>
+                <div className="stat-label">ENROLLMENT NO</div>
+                <div className="fw-700">{p.enrollment_number}</div>
+              </div>
+              <div className="card" style={{ background: 'var(--off-white)', padding: '1rem', boxShadow: 'none' }}>
                 <div className="stat-label">ROLE</div>
                 <div className="fw-700">{p.playing_role}</div>
               </div>
@@ -127,15 +131,20 @@ export default function Dashboard() {
                 <div className="stat-label">COURSE</div>
                 <div className="fw-700">{p.course} • {p.year} Year</div>
               </div>
-              <div className="card" style={{ background: 'var(--primary-bg)', padding: '1rem', boxShadow: 'none', gridColumn: '1 / -1' }}>
+              <div className="card" style={{ background: 'var(--primary-bg)', padding: '1rem', boxShadow: 'none' }}>
                 <div className="stat-label" style={{ color: 'var(--primary-dark)' }}>BASE PRICE</div>
                 <div className="fw-800 text-primary" style={{ fontSize: '1.5rem' }}>₹{fmt(p.base_price)}</div>
               </div>
             </div>
 
             {p.status === 'Sold' && (
-              <div className="alert alert-success mt-3" style={{ fontSize: '1.1rem' }}>
-                <ShieldCheck size={20} style={{ marginRight: '0.5rem' }} /> Sold to <strong className="fw-800" style={{ margin: '0 0.4rem' }}>{p.bought_by_name}</strong> for <strong className="fw-800" style={{ marginLeft: '0.4rem' }}>₹{fmt(p.winning_bid)}</strong>
+              <div className="alert alert-success mt-3" style={{ fontSize: '1.1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                <div><ShieldCheck size={20} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} /> Sold to <strong className="fw-800" style={{ margin: '0 0.2rem' }}>{p.bought_by_name}</strong> for <strong className="fw-800" style={{ marginLeft: '0.2rem' }}>₹{fmt(p.winning_bid)}</strong></div>
+                {p.bought_by_mobile && (
+                  <div style={{ fontSize: '0.95rem', opacity: 0.9, paddingLeft: '1.8rem' }}>
+                    Captain Contact: <strong className="fw-700">{p.bought_by_mobile}</strong>
+                  </div>
+                )}
               </div>
             )}
             

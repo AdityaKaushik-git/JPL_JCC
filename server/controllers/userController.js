@@ -95,7 +95,7 @@ exports.getDashboard = async (req, res) => {
         } else if (role === 'player') {
             const [userRows] = await pool.query('SELECT enrollment_number FROM users WHERE id = ?', [userId]);
             const [playerRows] = await pool.query(`
-                SELECT p.*, ar.status as auction_status, u.full_name as bought_by_name, ar.winning_bid
+                SELECT p.*, ar.status as auction_status, u.full_name as bought_by_name, u.mobile as bought_by_mobile, ar.winning_bid
                 FROM players p
                 LEFT JOIN auction_results ar ON ar.player_id = p.id AND ar.status = 'Sold'
                 LEFT JOIN users u ON u.id = ar.winning_user_id
