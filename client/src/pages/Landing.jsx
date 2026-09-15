@@ -14,12 +14,15 @@ export default function Landing() {
         <p style={{ fontSize: 'clamp(0.95rem, 2.5vw, 1.2rem)', opacity: 0.9, maxWidth: '600px', margin: '0 auto 2.5rem', lineHeight: 1.6, fontWeight: 500, padding: '0 0.5rem' }}>
           The official digital auction platform for the JCC College Cricket Premier League. Build your dream roster with real-time bidding.
         </p>
-        <div className="hero-btns" style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', padding: '0 1rem', maxWidth: '420px', margin: '0 auto' }}>
-          <Link to="/login" className="btn btn-white btn-lg" style={{ background: 'white', color: 'var(--primary)', padding: '0.875rem 1rem', fontSize: '1rem', borderRadius: '50px', fontWeight: 700, boxShadow: '0 10px 25px rgba(0,0,0,0.1)', flex: 1, justifyContent: 'center' }}>
+        <div className="hero-btns" style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', padding: '0 1rem', maxWidth: '650px', margin: '0 auto', flexWrap: 'wrap' }}>
+          <Link to="/login" className="btn btn-white btn-lg" style={{ background: 'white', color: 'var(--primary)', padding: '0.875rem 1rem', fontSize: '1rem', borderRadius: '50px', fontWeight: 700, boxShadow: '0 10px 25px rgba(0,0,0,0.1)', flex: 1, minWidth: '140px', justifyContent: 'center' }}>
             Sign In
           </Link>
-          <Link to="/register" className="btn btn-outline btn-lg" style={{ background: 'transparent', color: 'white', border: '2px solid rgba(255,255,255,0.3)', padding: '0.875rem 1rem', fontSize: '1rem', borderRadius: '50px', fontWeight: 700, flex: 1, justifyContent: 'center' }}>
-            Register Team <ArrowRight size={16} style={{ marginLeft: '0.3rem', flexShrink: 0 }} />
+          <Link to="/register" className="btn btn-outline btn-lg" style={{ background: 'transparent', color: 'white', border: '2px solid rgba(255,255,255,0.3)', padding: '0.875rem 1rem', fontSize: '1rem', borderRadius: '50px', fontWeight: 700, flex: 1, minWidth: '160px', justifyContent: 'center' }}>
+            Register Team
+          </Link>
+          <Link to="/auction" className="btn btn-primary btn-lg" style={{ background: '#0F172A', color: 'white', border: 'none', padding: '0.875rem 1.5rem', fontSize: '1rem', borderRadius: '50px', fontWeight: 800, flex: '1 1 100%', justifyContent: 'center', marginTop: '0.25rem' }}>
+            Watch Live Auction <ArrowRight size={16} style={{ marginLeft: '0.4rem', flexShrink: 0 }} />
           </Link>
         </div>
       </div>
