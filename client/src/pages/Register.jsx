@@ -105,7 +105,12 @@ export default function Register() {
       const payload = { ...form }
       delete payload.confirm_password
       if (form.role === 'user') payload.team_name = form.team_name
-      if (form.role === 'player' || form.role === 'user') payload.player_data = playerData
+      if (form.role === 'player' || form.role === 'user') {
+        payload.player_data = { ...playerData }
+        if (payload.player_data.course === 'Other' && payload.player_data.custom_course) {
+          payload.player_data.course = payload.player_data.custom_course
+        }
+      }
       await api.register(payload)
       setSuccess(true)
       setTimeout(() => navigate('/login'), 2000)
@@ -219,9 +224,12 @@ export default function Register() {
               <div className="grid-2" style={{ marginBottom: 0 }}>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label className="form-label" style={{ color: 'var(--primary-dark)' }}>Course</label>
-                  <select className="form-input" value={playerData.course} onChange={setP('course')}>
+                  <select className="form-input" value={playerData.course} onChange={setP('course')} style={{ marginBottom: playerData.course === 'Other' ? '0.5rem' : 0 }}>
                     <option>BTech</option><option>BCA</option><option>BBA</option><option>MCA</option><option>MBA</option><option>Other</option>
                   </select>
+                  {playerData.course === 'Other' && (
+                    <input className="form-input" placeholder="Enter course name" value={playerData.custom_course || ''} onChange={setP('custom_course')} />
+                  )}
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label className="form-label" style={{ color: 'var(--primary-dark)' }}>Year</label>

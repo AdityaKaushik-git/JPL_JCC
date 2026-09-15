@@ -113,7 +113,7 @@ export default function Admin() {
       if (createType === 'player' || createType === 'user') {
         payload.player_data = {
           playing_role: addForm.playing_role,
-          course: addForm.course,
+          course: addForm.course === 'Other' && addForm.custom_course ? addForm.custom_course : addForm.course,
           year: addForm.year,
           base_price: addForm.base_price
         }
@@ -356,9 +356,12 @@ export default function Admin() {
                     <div className="grid-2" style={{ marginBottom: 0 }}>
                       <div className="form-group" style={{ marginBottom: 0 }}>
                         <label className="form-label" style={{ color: 'var(--primary-dark)' }}>Course</label>
-                        <select className="form-input" value={addForm.course} onChange={set('course')}>
+                        <select className="form-input" value={addForm.course} onChange={set('course')} style={{ marginBottom: addForm.course === 'Other' ? '0.5rem' : 0 }}>
                           <option>BTech</option><option>BCA</option><option>BBA</option><option>MCA</option><option>MBA</option><option>Other</option>
                         </select>
+                        {addForm.course === 'Other' && (
+                          <input className="form-input" placeholder="Enter course name" value={addForm.custom_course || ''} onChange={set('custom_course')} />
+                        )}
                       </div>
                       <div className="form-group" style={{ marginBottom: 0 }}>
                         <label className="form-label" style={{ color: 'var(--primary-dark)' }}>Year</label>
