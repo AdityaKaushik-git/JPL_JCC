@@ -1,4 +1,4 @@
-﻿const pool = require('../config/db');
+const pool = require('../config/db');
 
 exports.getUsers = async (req, res) => {
     try {
@@ -167,5 +167,19 @@ exports.deleteAuctionHistoryRecord = async (req, res) => {
         res.status(500).json({ message: 'Server error', detail: error.message });
     } finally {
         connection.release();
+    }
+};
+
+exports.updatePlayerStatus = async (req, res) => {
+    try {
+        const { status } = req.body;
+        if (!['Available', 'In Auction', 'Sold', 'Unsold'].includes(status)) {
+            return res.status(400).json({ message: 'Invalid status' });
+        }
+        await pool.query('UPDATE players SET status = ? WHERE id = ?', [status, req.params.id]);
+        res.json({ message: 'Status updated successfully' });
+    } catch (error) {
+        console.error('UPDATE PLAYER STATUS ERROR:', error.message);
+        res.status(500).json({ message: 'Server error' });
     }
 };

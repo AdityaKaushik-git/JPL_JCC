@@ -30,11 +30,10 @@ export const api = {
   getAdminUsers:     ()     => request('/admin/users'),
   getAdminPlayers:   ()     => request('/admin/players'),
   getAuctionHistory: ()     => request('/admin/auction-history'),
-  deleteAuctionHistory: (id)=> request('/admin/auction-history/' + id, { method: 'DELETE' }),
+  deleteAuctionHistory: (id)   => request(`/admin/auction-history/${id}`, { method: 'DELETE' }),
   getAdminStats:     ()     => request('/admin/stats'),
   addPlayer:         (body) => request('/admin/players',        { method: 'POST', body: JSON.stringify(body) }),
-  deletePlayer:      (id)   => request('/admin/players/' + id,  { method: 'DELETE' }),
+  updatePlayer:      (id, body) => request(`/admin/players/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
+  updatePlayerStatus:(id, status) => request(`/admin/players/${id}/status`, { method: 'PATCH', body: JSON.stringify({ status }) }),
+  deletePlayer:      (id)   => request(`/admin/players/${id}`,  { method: 'DELETE' }),
 }
-
-
-

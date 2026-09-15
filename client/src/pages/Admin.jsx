@@ -141,6 +141,16 @@ export default function Admin() {
     }
   }
 
+  async function handleUpdatePlayerStatus(id, status) {
+    try {
+      await api.updatePlayerStatus(id, status)
+      addToast(`Player status updated to ${status}.`, 'success')
+      loadData()
+    } catch (err) {
+      addToast(err.message || 'Failed to update status', 'danger')
+    }
+  }
+
   async function handleDeleteHistory(id) {
     if (!window.confirm('Are you sure you want to delete this auction history record? This will reset the player to Available and refund the winning bidder (if sold).')) return
     try {
@@ -215,7 +225,19 @@ export default function Admin() {
                         <td><span className="badge badge-gray">{p.playing_role}</span></td>
                         <td><div className="text-medium fw-600">{p.course} • {p.year}</div></td>
                         <td className="fw-800 text-primary">₹{fmt(p.base_price)}</td>
-                        <td><span className={`badge ${statusClass[p.status] || 'badge-gray'}`}>{p.status}</span></td>
+                        <td>
+                          <select 
+                            className={`badge ${statusClass[p.status] || 'badge-gray'}`}
+                            style={{ padding: '0.2rem 0.5rem', outline: 'none', cursor: 'pointer', appearance: 'none', border: 'none' }}
+                            value={p.status}
+                            onChange={(e) => handleUpdatePlayerStatus(p.id, e.target.value)}
+                          >
+                            <option value="Available">Available</option>
+                            <option value="In Auction">In Auction</option>
+                            <option value="Sold">Sold</option>
+                            <option value="Unsold">Unsold</option>
+                          </select>
+                        </td>
                         <td style={{ textAlign: 'right' }}>
                           <button 
                             onClick={() => handleDeletePlayer(p.id, p.name)}

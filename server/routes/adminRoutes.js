@@ -12,6 +12,7 @@ router.get('/auction-history', adminController.getAuctionHistory);
 router.delete('/auction-history/:id', adminController.deleteAuctionHistoryRecord);
 router.post('/players', adminController.addPlayer);
 router.put('/players/:id', adminController.updatePlayer);
+router.patch('/players/:id/status', adminController.updatePlayerStatus);
 router.delete('/players/:id', adminController.deletePlayer);
 router.get('/auction/state', adminController.getAuctionState);
 

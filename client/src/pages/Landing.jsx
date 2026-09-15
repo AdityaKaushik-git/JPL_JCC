@@ -26,24 +26,24 @@ export default function Landing() {
 
       <div className="features-section" style={{ padding: '6rem 2rem', maxWidth: '1280px', margin: '0 auto' }}>
         <div className="text-center mb-3">
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-dark)', marginBottom: '1rem', letterSpacing: '-0.5px' }}>Platform Features</h2>
-          <p style={{ fontSize: '1.1rem', color: 'var(--text-medium)', maxWidth: '600px', margin: '0 auto' }}>Experience a seamless, professional-grade auction environment designed for high-stakes team building.</p>
+          <h2 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--text-dark)', marginBottom: '1rem', letterSpacing: '-0.5px' }}>Platform Capabilities</h2>
+          <p style={{ fontSize: '1.1rem', color: 'var(--text-medium)', maxWidth: '600px', margin: '0 auto' }}>A meticulously engineered environment built to handle the intensity of competitive franchise bidding.</p>
         </div>
         <div className="grid-3 mt-3">
           <div className="card text-center" style={{ padding: '3rem 2rem', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.03)' }}>
             <Gavel size={48} color="var(--primary)" style={{ margin: '0 auto 1.5rem' }} />
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1rem' }}>Live Bidding Engine</h3>
-            <p style={{ color: 'var(--text-medium)', lineHeight: 1.6 }}>Real-time WebSocket integration ensures millisecond-accurate bid placements and instantaneous ledger updates.</p>
+            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1rem' }}>Real-Time Bidding Engine</h3>
+            <p style={{ color: 'var(--text-medium)', lineHeight: 1.6 }}>Experience zero-latency bid placements powered by an advanced WebSocket infrastructure, ensuring absolute precision when the timer runs down.</p>
           </div>
           <div className="card text-center" style={{ padding: '3rem 2rem', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.03)' }}>
             <Users size={48} color="var(--primary)" style={{ margin: '0 auto 1.5rem' }} />
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1rem' }}>Roster Management</h3>
-            <p style={{ color: 'var(--text-medium)', lineHeight: 1.6 }}>Comprehensive dashboards to track player acquisitions, remaining budget, and team composition dynamically.</p>
+            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1rem' }}>Intelligent Roster Control</h3>
+            <p style={{ color: 'var(--text-medium)', lineHeight: 1.6 }}>Equip your franchise with dynamic dashboards that provide instantaneous insights into budget constraints and squad composition.</p>
           </div>
           <div className="card text-center" style={{ padding: '3rem 2rem', border: 'none', boxShadow: '0 10px 30px rgba(0,0,0,0.03)' }}>
             <ShieldCheck size={48} color="var(--primary)" style={{ margin: '0 auto 1.5rem' }} />
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1rem' }}>Secure Transactions</h3>
-            <p style={{ color: 'var(--text-medium)', lineHeight: 1.6 }}>Role-based access control and encrypted token architecture guarantees fairness and administrative oversight.</p>
+            <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: '1rem' }}>Enterprise-Grade Security</h3>
+            <p style={{ color: 'var(--text-medium)', lineHeight: 1.6 }}>Built with strict role-based access protocols and encrypted token validation to guarantee auction integrity and prevent tampering.</p>
           </div>
         </div>
       </div>
@@ -67,7 +67,8 @@ export default function Landing() {
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
           <Trophy size={20} /> <span style={{ fontWeight: 700, letterSpacing: '1px' }}>JPL AUCTION PLATFORM</span>
         </div>
-        © {new Date().getFullYear()} JCC College. All rights reserved.
+        <div style={{ marginBottom: '0.5rem' }}>© {new Date().getFullYear()} JCC College. All rights reserved.</div>
+        <div style={{ fontSize: '0.85rem', opacity: 0.8 }}>Designed by Aditya Kaushik</div>
       </footer>
     </div>
   )
