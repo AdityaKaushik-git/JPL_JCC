@@ -138,11 +138,22 @@ export default function Dashboard() {
             </div>
 
             {p.status === 'Sold' && (
-              <div className="alert alert-success mt-3" style={{ fontSize: '1.1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                <div><ShieldCheck size={20} style={{ marginRight: '0.5rem', verticalAlign: 'middle' }} /> Sold to <strong className="fw-800" style={{ margin: '0 0.2rem' }}>{p.bought_by_name}</strong> for <strong className="fw-800" style={{ marginLeft: '0.2rem' }}>₹{fmt(p.winning_bid)}</strong></div>
+              <div style={{ background: 'linear-gradient(135deg, #059669 0%, #047857 100%)', color: 'white', padding: '1.5rem', borderRadius: 'var(--radius)', marginTop: '1.5rem', boxShadow: '0 4px 15px rgba(5, 150, 105, 0.3)', position: 'relative', overflow: 'hidden' }}>
+                <div style={{ position: 'absolute', right: '-20px', top: '-20px', opacity: 0.1 }}><ShieldCheck size={120} /></div>
+                
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
+                  <ShieldCheck size={24} color="#A7F3D0" />
+                  <span style={{ fontWeight: 800, fontSize: '1.2rem', letterSpacing: '0.5px' }}>OFFICIALLY SOLD</span>
+                </div>
+                
+                <div style={{ fontSize: '1.1rem', opacity: 0.9, marginBottom: '1rem' }}>
+                  Acquired by <strong style={{ color: 'white', fontSize: '1.3rem', fontWeight: 900 }}>{p.bought_by_name || 'a Franchise'}</strong> for <strong style={{ color: '#A7F3D0', fontSize: '1.3rem', fontWeight: 900 }}>₹{fmt(p.winning_bid)}</strong>
+                </div>
+
                 {p.bought_by_mobile && (
-                  <div style={{ fontSize: '0.95rem', opacity: 0.9, paddingLeft: '1.8rem' }}>
-                    Captain Contact: <strong className="fw-700">{p.bought_by_mobile}</strong>
+                  <div style={{ background: 'rgba(255, 255, 255, 0.15)', padding: '0.75rem 1rem', borderRadius: 'var(--radius-sm)', display: 'inline-block', border: '1px solid rgba(255, 255, 255, 0.2)' }}>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: '#A7F3D0', textTransform: 'uppercase', marginBottom: '0.2rem' }}>Captain's Contact</div>
+                    <div style={{ fontSize: '1.2rem', fontWeight: 800, letterSpacing: '1px' }}>{p.bought_by_mobile}</div>
                   </div>
                 )}
               </div>
