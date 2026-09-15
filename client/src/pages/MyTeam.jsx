@@ -1,10 +1,12 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { api } from '../services/api'
+import { useAuth } from '../contexts/AuthContext'
 import { Users, UserCircle } from 'lucide-react'
 
 function fmt(n) { return Number(n || 0).toLocaleString('en-IN') }
 
 export default function MyTeam() {
+  const { user } = useAuth()
   const [team, setTeam] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -38,8 +40,8 @@ export default function MyTeam() {
         <>
           <div className="card mb-3 flex justify-between items-center" style={{ background: 'var(--primary-bg)', borderColor: '#FFD8C4' }}>
             <div>
-              <div className="text-medium fw-700" style={{ fontSize: '0.85rem' }}>TOTAL SQUAD SIZE</div>
-              <div className="text-dark fw-800" style={{ fontSize: '1.5rem' }}>{team.length} Players</div>
+              <div className="text-medium fw-700" style={{ fontSize: '0.85rem' }}>TOTAL TEAM SIZE</div>
+              <div className="text-dark fw-800" style={{ fontSize: '1.5rem' }}>{team.length + 1} Players</div>
             </div>
             <div className="text-right">
               <div className="text-medium fw-700" style={{ fontSize: '0.85rem', color: 'var(--primary-dark)' }}>TOTAL SPENT</div>
@@ -47,6 +49,22 @@ export default function MyTeam() {
             </div>
           </div>
           <div className="player-grid">
+            <div className="player-item" style={{ border: '2px solid var(--primary)' }}>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="avatar-circle" style={{ background: 'var(--primary)', color: 'white' }}><UserCircle size={28} /></div>
+                <div>
+                  <div className="p-name">{user?.full_name || 'You'}</div>
+                  <span className="badge badge-primary" style={{ background: 'var(--primary)', color: 'white' }}>Team Captain</span>
+                </div>
+              </div>
+              <div className="p-meta">
+                <span>Franchise Owner</span> • <span>Bidder</span>
+              </div>
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', marginTop: '1rem' }}>
+                <div className="text-medium" style={{ fontSize: '0.8rem', fontWeight: 700 }}>ACQUIRED FOR</div>
+                <div className="p-price">N/A</div>
+              </div>
+            </div>
             {team.map(p => (
               <div key={p.id} className="player-item">
                 <div className="flex items-center gap-3 mb-3">
