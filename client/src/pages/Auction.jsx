@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { io } from 'socket.io-client'
 import { useAuth } from '../contexts/AuthContext'
 import { api } from '../services/api'
@@ -106,13 +106,13 @@ export default function Auction() {
       <ToastContainer toasts={toasts} removeToast={removeToast} />
 
       {soldInfo && (
-        <div className="sold-overlay" style={{ background: 'rgba(15, 23, 42, 0.85)', backdropFilter: 'blur(8px)' }}>
-          <div className="sold-card" style={{ background: 'linear-gradient(135deg, #E85D04, #C44B03)', color: 'white', border: 'none', padding: '4rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}><Gavel size={64} color="white" /></div>
-            <h2 style={{ fontSize: '3rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '2px', margin: '1rem 0' }}>SOLD!</h2>
-            <div style={{ fontSize: '1.8rem', fontWeight: 700 }}>{soldInfo.playerName}</div>
-            <div className="sold-price" style={{ color: '#FFD8C4', fontSize: '4.5rem', margin: '1.5rem 0', textShadow: '0 4px 10px rgba(0,0,0,0.3)' }}>₹{fmt(soldInfo.price)}</div>
-            <div style={{ fontSize: '1.3rem', opacity: 0.9 }}>to <strong style={{ color: 'white', fontWeight: 800 }}>{soldInfo.teamName}</strong></div>
+        <div className="sold-overlay" style={{ background: 'rgba(15, 23, 42, 0.88)', backdropFilter: 'blur(8px)', position: 'fixed', inset: 0, zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+          <div className="sold-card" style={{ background: 'linear-gradient(135deg, #E85D04, #C44B03)', color: 'white', border: 'none', padding: 'clamp(1.5rem, 6vw, 4rem)', width: '100%', maxWidth: 500, borderRadius: 'var(--radius-lg)', textAlign: 'center' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}><Gavel size={52} color="white" /></div>
+            <h2 style={{ fontSize: 'clamp(1.8rem, 7vw, 3rem)', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '2px', margin: '0.5rem 0' }}>SOLD!</h2>
+            <div style={{ fontSize: 'clamp(1rem, 4vw, 1.6rem)', fontWeight: 700 }}>{soldInfo.playerName}</div>
+            <div className="sold-price" style={{ color: '#FFD8C4', fontSize: 'clamp(1.8rem, 8vw, 4rem)', margin: '1rem 0', textShadow: '0 4px 10px rgba(0,0,0,0.3)' }}>₹{fmt(soldInfo.price)}</div>
+            <div style={{ fontSize: 'clamp(0.9rem, 3vw, 1.2rem)', opacity: 0.9 }}>to <strong style={{ color: 'white', fontWeight: 800 }}>{soldInfo.teamName}</strong></div>
           </div>
         </div>
       )}
@@ -129,7 +129,7 @@ export default function Auction() {
         </div>
       )}
 
-      <div className="auction-layout" style={{ gridTemplateColumns: '1fr 380px', gap: '1.5rem' }}>
+      <div className="auction-layout">
         {/* MAIN ARENA */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           
@@ -154,8 +154,8 @@ export default function Auction() {
 
           {state.player ? (
             <div className="card" style={{ padding: 0, overflow: 'hidden', display: 'flex', flexDirection: 'column', flex: 1 }}>
-              <div style={{ background: 'linear-gradient(135deg, #1E293B, #0F172A)', color: 'white', padding: '3rem 2rem', textAlign: 'center', position: 'relative' }}>
-                <div style={{ fontSize: '3rem', fontWeight: 900, marginBottom: '0.5rem', letterSpacing: '-1px' }}>{state.player.name}</div>
+              <div style={{ background: 'linear-gradient(135deg, #1E293B, #0F172A)', color: 'white', padding: 'clamp(1.5rem, 5vw, 3rem) clamp(1rem, 4vw, 2rem)', textAlign: 'center', position: 'relative' }}>
+                <div style={{ fontSize: 'clamp(1.4rem, 5vw, 2.8rem)', fontWeight: 900, marginBottom: '0.5rem', letterSpacing: '-0.5px' }}>{state.player.name}</div>
                 <div className="flex justify-center gap-2 mb-3">
                   <span className="badge" style={{ background: 'rgba(255,255,255,0.1)', color: '#A7F3D0', border: '1px solid rgba(255,255,255,0.2)' }}>{state.player.playing_role}</span>
                   <span className="badge" style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: '1px solid rgba(255,255,255,0.2)' }}>{state.player.course} • {state.player.year} Year</span>
@@ -165,47 +165,47 @@ export default function Auction() {
                 </div>
               </div>
 
-              <div style={{ padding: '3rem 2rem', background: 'var(--white)', textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div style={{ padding: '1.5rem 1rem', background: 'var(--white)', textAlign: 'center', flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 
-                <div className="grid-2" style={{ gap: '2rem', marginBottom: '2rem' }}>
-                  <div style={{ background: 'var(--off-white)', padding: '2rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
-                    <div style={{ color: 'var(--text-medium)', fontWeight: 700, fontSize: '0.9rem', letterSpacing: '1px', marginBottom: '0.5rem' }}>CURRENT HIGHEST BID</div>
-                    <div style={{ fontSize: '3.5rem', fontWeight: 900, color: 'var(--text-dark)', lineHeight: 1 }}>₹{fmt(state.currentBid)}</div>
-                    <div style={{ marginTop: '0.5rem', fontSize: '1.1rem', fontWeight: 600, color: 'var(--primary)' }}>
+                <div className="grid-2" style={{ gap: '1rem', marginBottom: '1.5rem' }}>
+                  <div style={{ background: 'var(--off-white)', padding: '1.25rem 1rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)' }}>
+                    <div style={{ color: 'var(--text-medium)', fontWeight: 700, fontSize: '0.78rem', letterSpacing: '1px', marginBottom: '0.4rem' }}>CURRENT HIGHEST BID</div>
+                    <div style={{ fontSize: 'clamp(1.6rem, 5vw, 3rem)', fontWeight: 900, color: 'var(--text-dark)', lineHeight: 1 }}>₹{fmt(state.currentBid)}</div>
+                    <div style={{ marginTop: '0.4rem', fontSize: '0.95rem', fontWeight: 600, color: 'var(--primary)' }}>
                       {state.highestBidderName ? `by ${state.highestBidderName}` : 'Awaiting first bid...'}
                     </div>
                   </div>
-                  <div style={{ background: 'var(--off-white)', padding: '2rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-                    <div style={{ color: 'var(--text-medium)', fontWeight: 700, fontSize: '0.9rem', letterSpacing: '1px', marginBottom: '0.5rem' }}>TIME REMAINING</div>
-                    <div className={`timer ${state.timeLeft < 15 && state.status === 'Live' ? 'urgent' : ''}`} style={{ fontSize: '4rem', margin: 0 }}>
+                  <div style={{ background: 'var(--off-white)', padding: '1.25rem 1rem', borderRadius: 'var(--radius)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+                    <div style={{ color: 'var(--text-medium)', fontWeight: 700, fontSize: '0.78rem', letterSpacing: '1px', marginBottom: '0.4rem' }}>TIME REMAINING</div>
+                    <div className={`timer ${state.timeLeft < 15 && state.status === 'Live' ? 'urgent' : ''}`}>
                       {toMMSS(state.timeLeft)}
                     </div>
                   </div>
                 </div>
 
                 {user?.role === 'user' && (
-                  <div style={{ background: 'var(--primary-bg)', padding: '2rem', borderRadius: 'var(--radius)', border: '1px solid #FFD8C4' }}>
-                    <div className="flex justify-between items-center mb-3">
-                      <span style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--primary-dark)' }}>Next Required Bid:</span>
-                      <span style={{ fontSize: '2rem', fontWeight: 900, color: 'var(--primary)' }}>₹{fmt(state.nextBid)}</span>
+                  <div style={{ background: 'var(--primary-bg)', padding: '1.25rem 1rem', borderRadius: 'var(--radius)', border: '1px solid #FFD8C4' }}>
+                    <div className="flex justify-between items-center mb-3" style={{ flexWrap: 'wrap', gap: '0.5rem' }}>
+                      <span style={{ fontSize: '0.95rem', fontWeight: 700, color: 'var(--primary-dark)' }}>Next Required Bid:</span>
+                      <span style={{ fontSize: '1.6rem', fontWeight: 900, color: 'var(--primary)' }}>₹{fmt(state.nextBid)}</span>
                     </div>
                     <button 
                       className="btn btn-primary btn-full" 
-                      style={{ fontSize: '1.4rem', padding: '1.2rem', borderRadius: '12px', opacity: !canBid && !isHighest ? 0.5 : 1 }} 
+                      style={{ fontSize: 'clamp(1rem, 3vw, 1.3rem)', padding: '1rem', borderRadius: '12px', opacity: !canBid && !isHighest ? 0.5 : 1 }} 
                       onClick={placeBid} 
                       disabled={!canBid}
                     >
                       {isHighest ? (
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                          <Trophy size={24} /> YOU ARE THE HIGHEST BIDDER
+                          <Trophy size={20} /> YOU ARE THE HIGHEST BIDDER
                         </div>
                       ) : (
                         `PLACE BID — ₹${fmt(state.nextBid)}`
                       )}
                     </button>
                     {!canBid && !isHighest && state.status === 'Live' && (
-                      <div style={{ marginTop: '0.8rem', color: 'var(--danger)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
-                        <AlertCircle size={16} /> Insufficient purse or auction not active
+                      <div style={{ marginTop: '0.75rem', color: 'var(--danger)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem', fontSize: '0.875rem' }}>
+                        <AlertCircle size={15} /> Insufficient purse or auction not active
                       </div>
                     )}
                   </div>
