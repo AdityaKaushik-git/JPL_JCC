@@ -21,7 +21,7 @@ export default function Landing() {
           <Link to="/register" className="btn btn-outline btn-lg" style={{ background: 'transparent', color: 'white', border: '2px solid rgba(255,255,255,0.3)', padding: '0.875rem 1rem', fontSize: '1rem', borderRadius: '50px', fontWeight: 700, flex: 1, minWidth: '160px', justifyContent: 'center' }}>
             Register Team
           </Link>
-          <Link to="/auction" className="btn btn-primary btn-lg" style={{ background: '#0F172A', color: 'white', border: 'none', padding: '0.875rem 1.5rem', fontSize: '1rem', borderRadius: '50px', fontWeight: 800, flex: '1 1 100%', justifyContent: 'center', marginTop: '0.25rem' }}>
+          <Link to="/auction" className="btn btn-lg" style={{ background: '#FACC15', color: '#713F12', border: 'none', padding: '0.875rem 1.5rem', fontSize: '1rem', borderRadius: '50px', fontWeight: 800, flex: '1 1 100%', justifyContent: 'center', marginTop: '0.25rem', boxShadow: '0 4px 14px rgba(250, 204, 21, 0.4)' }}>
             Watch Live Auction <ArrowRight size={16} style={{ marginLeft: '0.4rem', flexShrink: 0 }} />
           </Link>
         </div>

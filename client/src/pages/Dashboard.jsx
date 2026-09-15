@@ -16,6 +16,9 @@ export default function Dashboard() {
   const [adminStats, setAdminStats] = useState(null)
   const [liveStats, setLiveStats] = useState({ bidders: 0, players: 0, admins: 0, total: 0 })
 
+  const [editingPrice, setEditingPrice] = useState(false)
+  const [newPrice, setNewPrice] = useState('')
+
   useEffect(() => {
     api.getDashboard()
       .then(d => setData(d))
@@ -137,18 +140,43 @@ export default function Dashboard() {
                   <span style={{ fontSize: '0.7rem', opacity: 0.8 }}>Updates: {p.base_price_updates_count || 0}/2</span>
                 </div>
                 <div className="fw-800 text-primary" style={{ fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span>₹{fmt(p.base_price)}</span>
-                  {(p.base_price_updates_count || 0) < 2 && p.status === 'Available' && (
-                    <button onClick={() => {
-                      const newPrice = window.prompt(`Enter new base price (Max 50 Lakhs). You have ${2 - (p.base_price_updates_count || 0)} update(s) remaining:\nCurrent: ₹${p.base_price}`, p.base_price);
-                      if (newPrice && !isNaN(newPrice) && Number(newPrice) >= 1000) {
+                  {editingPrice ? (
+                    <div style={{ display: 'flex', gap: '0.5rem', width: '100%' }}>
+                      <input 
+                        type="number" 
+                        inputMode="numeric" 
+                        pattern="[0-9]*"
+                        className="form-input" 
+                        style={{ padding: '0.2rem 0.5rem', fontSize: '1.1rem', flex: 1, minWidth: 0 }}
+                        value={newPrice} 
+                        onChange={e => setNewPrice(e.target.value)} 
+                        placeholder="New price"
+                        autoFocus
+                      />
+                      <button onClick={() => {
+                        if (!newPrice || isNaN(newPrice) || Number(newPrice) < 1000) return alert('Invalid price');
                         api.updatePlayerProfile({ base_price: Number(newPrice) })
                           .then(() => { alert('Base price updated!'); window.location.reload(); })
                           .catch(err => alert(err.message));
-                      }
-                    }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', opacity: 0.7, padding: '0.2rem' }}>
-                      <Edit3 size={18} />
-                    </button>
+                      }} style={{ background: 'var(--success)', color: 'white', border: 'none', borderRadius: 'var(--radius-sm)', padding: '0 0.5rem', cursor: 'pointer' }}>
+                        <Check size={18} />
+                      </button>
+                      <button onClick={() => setEditingPrice(false)} style={{ background: 'var(--danger)', color: 'white', border: 'none', borderRadius: 'var(--radius-sm)', padding: '0 0.5rem', cursor: 'pointer' }}>
+                        <X size={18} />
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <span>₹{fmt(p.base_price)}</span>
+                      {(p.base_price_updates_count || 0) < 2 && p.status === 'Available' && (
+                        <button onClick={() => {
+                          setNewPrice(p.base_price)
+                          setEditingPrice(true)
+                        }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', opacity: 0.7, padding: '0.2rem' }}>
+                          <Edit3 size={18} />
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
