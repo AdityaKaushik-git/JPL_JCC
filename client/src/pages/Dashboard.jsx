@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { io } from 'socket.io-client'
 import { useAuth } from '../contexts/AuthContext'
 import { api } from '../services/api'
-import { Wallet, Users, History, Settings, Play, ShieldCheck, Activity, Trophy, Clock } from 'lucide-react'
+import { Wallet, Users, History, Settings, Play, ShieldCheck, Activity, Trophy, Clock, Edit3, X, Check } from 'lucide-react'
 
 function fmt(n) { return Number(n || 0).toLocaleString('en-IN') }
 
@@ -131,9 +131,26 @@ export default function Dashboard() {
                 <div className="stat-label">COURSE</div>
                 <div className="fw-700">{p.course} • {p.year} Year</div>
               </div>
-              <div className="card" style={{ background: 'var(--primary-bg)', padding: '1rem', boxShadow: 'none' }}>
-                <div className="stat-label" style={{ color: 'var(--primary-dark)' }}>BASE PRICE</div>
-                <div className="fw-800 text-primary" style={{ fontSize: '1.5rem' }}>₹{fmt(p.base_price)}</div>
+              <div className="card" style={{ background: 'var(--primary-bg)', padding: '1rem', boxShadow: 'none', position: 'relative' }}>
+                <div className="stat-label" style={{ color: 'var(--primary-dark)', display: 'flex', justifyContent: 'space-between' }}>
+                  BASE PRICE
+                  <span style={{ fontSize: '0.7rem', opacity: 0.8 }}>Updates: {p.base_price_updates_count || 0}/2</span>
+                </div>
+                <div className="fw-800 text-primary" style={{ fontSize: '1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span>₹{fmt(p.base_price)}</span>
+                  {(p.base_price_updates_count || 0) < 2 && p.status === 'Available' && (
+                    <button onClick={() => {
+                      const newPrice = window.prompt(`Enter new base price (Max 50 Lakhs). You have ${2 - (p.base_price_updates_count || 0)} update(s) remaining:\nCurrent: ₹${p.base_price}`, p.base_price);
+                      if (newPrice && !isNaN(newPrice) && Number(newPrice) >= 1000) {
+                        api.updatePlayerProfile({ base_price: Number(newPrice) })
+                          .then(() => { alert('Base price updated!'); window.location.reload(); })
+                          .catch(err => alert(err.message));
+                      }
+                    }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--primary)', opacity: 0.7, padding: '0.2rem' }}>
+                      <Edit3 size={18} />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
 

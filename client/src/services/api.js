@@ -26,6 +26,7 @@ export const api = {
   getMyBids:         ()     => request('/users/my-bids'),
   getProfile:        ()     => request('/users/profile'),
   updateProfile:     (body) => request('/users/profile',        { method: 'PUT',  body: JSON.stringify(body) }),
+  updatePlayerProfile: (body) => request('/users/player-profile', { method: 'PUT', body: JSON.stringify(body) }),
   getDashboard:      ()     => request('/users/dashboard'),
   getAdminUsers:     ()     => request('/admin/users'),
   getAdminPlayers:   ()     => request('/admin/players'),

@@ -96,7 +96,7 @@ exports.getDashboard = async (req, res) => {
         } else if (role === 'player') {
             const [userRows] = await pool.query('SELECT enrollment_number FROM users WHERE id = ?', [userId]);
             const [playerRows] = await pool.query(`
-                SELECT p.*, t.purchase_price as winning_bid, u.full_name as bought_by_name, u.mobile as bought_by_mobile
+                SELECT p.*, t.purchase_price as winning_bid, u.full_name as bought_by_name, u.mobile as bought_by_mobile, p.base_price_updates_count
                 FROM players p
                 LEFT JOIN teams t ON t.player_id = p.id
                 LEFT JOIN users u ON u.id = t.user_id
@@ -133,7 +133,16 @@ exports.updatePlayerProfile = async (req, res) => {
         }
         const [users] = await pool.query('SELECT enrollment_number FROM users WHERE id = ?', [req.user.id]);
         if (users.length === 0) return res.status(404).json({ message: 'User not found' });
-        await pool.query('UPDATE players SET base_price = ? WHERE enrollment_number = ?', [base_price, users[0].enrollment_number]);
+        
+        const enrollmentNo = users[0].enrollment_number;
+        const [players] = await pool.query('SELECT base_price_updates_count FROM players WHERE enrollment_number = ?', [enrollmentNo]);
+        if (players.length === 0) return res.status(404).json({ message: 'Player not found' });
+        
+        if (players[0].base_price_updates_count >= 2) {
+            return res.status(400).json({ message: 'You have reached the maximum limit of 2 base price updates.' });
+        }
+
+        await pool.query('UPDATE players SET base_price = ?, base_price_updates_count = base_price_updates_count + 1 WHERE enrollment_number = ?', [base_price, enrollmentNo]);
         res.json({ message: 'Base price updated successfully' });
     } catch (error) {
         console.error(error);
