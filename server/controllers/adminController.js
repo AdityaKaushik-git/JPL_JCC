@@ -171,15 +171,42 @@ exports.deleteAuctionHistoryRecord = async (req, res) => {
 };
 
 exports.updatePlayerStatus = async (req, res) => {
+    const connection = await pool.getConnection();
     try {
+        await connection.beginTransaction();
         const { status } = req.body;
+        const playerId = req.params.id;
+
         if (!['Available', 'In Auction', 'Sold', 'Unsold'].includes(status)) {
+            await connection.rollback();
             return res.status(400).json({ message: 'Invalid status' });
         }
-        await pool.query('UPDATE players SET status = ? WHERE id = ?', [status, req.params.id]);
+
+        // If changing to anything OTHER than Sold, we should clean up if they were previously Sold
+        if (status !== 'Sold') {
+            const [historyRecords] = await connection.query('SELECT * FROM auction_results WHERE player_id = ? ORDER BY completed_at DESC LIMIT 1', [playerId]);
+            if (historyRecords.length > 0) {
+                const record = historyRecords[0];
+                if (record.status === 'Sold') {
+                    // Refund purse and remove from teams
+                    await connection.query('UPDATE users SET purse = purse + ? WHERE id = ?', [record.winning_bid, record.winning_user_id]);
+                    await connection.query('DELETE FROM teams WHERE player_id = ? AND user_id = ?', [record.player_id, record.winning_user_id]);
+                }
+                // Delete history completely
+                await connection.query('DELETE FROM auction_results WHERE id = ?', [record.id]);
+                await connection.query('DELETE FROM bids WHERE auction_id = ?', [record.auction_id]);
+                await connection.query('DELETE FROM auctions WHERE id = ?', [record.auction_id]);
+            }
+        }
+
+        await connection.query('UPDATE players SET status = ? WHERE id = ?', [status, playerId]);
+        await connection.commit();
         res.json({ message: 'Status updated successfully' });
     } catch (error) {
+        await connection.rollback();
         console.error('UPDATE PLAYER STATUS ERROR:', error.message);
         res.status(500).json({ message: 'Server error' });
+    } finally {
+        connection.release();
     }
 };

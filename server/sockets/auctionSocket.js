@@ -13,6 +13,18 @@ let activeAuction = {
     timerInterval: null
 };
 
+const connectedUsers = new Map();
+
+function broadcastLiveStats(io) {
+    let bidders = 0, players = 0, admins = 0;
+    for (const user of connectedUsers.values()) {
+        if (user.role === 'user') bidders++;
+        else if (user.role === 'player') players++;
+        else if (user.role === 'admin') admins++;
+    }
+    io.emit('live:stats', { bidders, players, admins, total: connectedUsers.size });
+}
+
 module.exports = (io) => {
     // Authentication middleware for sockets
     io.use((socket, next) => {
@@ -28,9 +40,12 @@ module.exports = (io) => {
 
     io.on('connection', (socket) => {
         console.log(`User connected: ${socket.user.id}`);
+        connectedUsers.set(socket.id, socket.user);
+        broadcastLiveStats(io);
 
         socket.on('user:join', () => {
             socket.emit('auction:stateUpdate', getSanitizedState());
+            socket.emit('live:stats', getLiveStatsData());
         });
 
         socket.on('admin:startPlayer', async (data) => {
@@ -285,8 +300,20 @@ module.exports = (io) => {
 
         socket.on('disconnect', () => {
             console.log(`User disconnected: ${socket.user.id}`);
+            connectedUsers.delete(socket.id);
+            broadcastLiveStats(io);
         });
     });
+
+    function getLiveStatsData() {
+        let bidders = 0, players = 0, admins = 0;
+        for (const user of connectedUsers.values()) {
+            if (user.role === 'user') bidders++;
+            else if (user.role === 'player') players++;
+            else if (user.role === 'admin') admins++;
+        }
+        return { bidders, players, admins, total: connectedUsers.size };
+    }
 
     function handleTimer(io) {
         if (activeAuction.timeLeft > 0) {
