@@ -1,25 +1,25 @@
-﻿import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { Trophy, TrendingUp, Users, Gavel, ArrowRight, ShieldCheck, Activity } from 'lucide-react'
 
 export default function Landing() {
   return (
     <div>
-      <div className="hero" style={{ background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))', padding: '8rem 2rem', textAlign: 'center', color: 'white' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '2rem' }}>
-          <div style={{ background: 'rgba(255,255,255,0.15)', padding: '1.5rem', borderRadius: '50%', backdropFilter: 'blur(10px)' }}>
-            <Trophy size={64} color="white" />
+      <div className="hero" style={{ background: 'linear-gradient(135deg, var(--primary), var(--primary-dark))', padding: 'clamp(4rem, 12vw, 8rem) 1.25rem', textAlign: 'center', color: 'white' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+          <div style={{ background: 'rgba(255,255,255,0.15)', padding: 'clamp(1rem, 3vw, 1.5rem)', borderRadius: '50%', backdropFilter: 'blur(10px)' }}>
+            <Trophy size={48} color="white" />
           </div>
         </div>
-        <h1 style={{ fontSize: '4.5rem', fontWeight: 800, marginBottom: '1.5rem', letterSpacing: '-1.5px', lineHeight: 1.1 }}>JPL Auction Portal</h1>
-        <p style={{ fontSize: '1.25rem', opacity: 0.9, maxWidth: '650px', margin: '0 auto 3rem', lineHeight: 1.6, fontWeight: 500 }}>
+        <h1 style={{ fontSize: 'clamp(2rem, 8vw, 4.5rem)', fontWeight: 800, marginBottom: '1.25rem', letterSpacing: '-1px', lineHeight: 1.1 }}>JPL Auction Portal</h1>
+        <p style={{ fontSize: 'clamp(0.95rem, 2.5vw, 1.2rem)', opacity: 0.9, maxWidth: '600px', margin: '0 auto 2.5rem', lineHeight: 1.6, fontWeight: 500, padding: '0 0.5rem' }}>
           The official digital auction platform for the JCC College Cricket Premier League. Build your dream roster with real-time bidding.
         </p>
-        <div className="hero-btns" style={{ display: 'flex', gap: '1rem', justifyContent: 'center' }}>
-          <Link to="/login" className="btn btn-white btn-lg" style={{ background: 'white', color: 'var(--primary)', padding: '1rem 2.5rem', fontSize: '1.1rem', borderRadius: '50px', fontWeight: 700, boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}>
-            Access Portal
+        <div className="hero-btns" style={{ display: 'flex', gap: '0.875rem', justifyContent: 'center', flexWrap: 'wrap', padding: '0 1rem' }}>
+          <Link to="/login" className="btn btn-white btn-lg" style={{ background: 'white', color: 'var(--primary)', padding: '0.875rem 2rem', fontSize: '1rem', borderRadius: '50px', fontWeight: 700, boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}>
+            Sign In
           </Link>
-          <Link to="/register" className="btn btn-outline btn-lg" style={{ background: 'transparent', color: 'white', border: '2px solid rgba(255,255,255,0.3)', padding: '1rem 2.5rem', fontSize: '1.1rem', borderRadius: '50px', fontWeight: 700 }}>
-            Register Team <ArrowRight size={20} style={{ marginLeft: '0.5rem' }} />
+          <Link to="/register" className="btn btn-outline btn-lg" style={{ background: 'transparent', color: 'white', border: '2px solid rgba(255,255,255,0.3)', padding: '0.875rem 2rem', fontSize: '1rem', borderRadius: '50px', fontWeight: 700 }}>
+            Register Team <ArrowRight size={18} style={{ marginLeft: '0.4rem' }} />
           </Link>
         </div>
       </div>
