@@ -15,10 +15,10 @@ export default function Landing() {
           The official digital auction platform for the JCC College Cricket Premier League. Build your dream roster with real-time bidding.
         </p>
         <div className="hero-btns" style={{ display: 'flex', gap: '0.875rem', justifyContent: 'center', flexWrap: 'wrap', padding: '0 1rem' }}>
-          <Link to="/login" className="btn btn-white btn-lg" style={{ background: 'white', color: 'var(--primary)', padding: '0.875rem 2rem', fontSize: '1rem', borderRadius: '50px', fontWeight: 700, boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}>
+          <Link to="/login" className="btn btn-white btn-lg" style={{ background: 'white', color: 'var(--primary)', padding: '0.875rem 2rem', fontSize: '1rem', borderRadius: '50px', fontWeight: 700, boxShadow: '0 10px 25px rgba(0,0,0,0.1)', minWidth: '160px', justifyContent: 'center' }}>
             Sign In
           </Link>
-          <Link to="/register" className="btn btn-outline btn-lg" style={{ background: 'transparent', color: 'white', border: '2px solid rgba(255,255,255,0.3)', padding: '0.875rem 2rem', fontSize: '1rem', borderRadius: '50px', fontWeight: 700 }}>
+          <Link to="/register" className="btn btn-outline btn-lg" style={{ background: 'transparent', color: 'white', border: '2px solid rgba(255,255,255,0.3)', padding: '0.875rem 2rem', fontSize: '1rem', borderRadius: '50px', fontWeight: 700, minWidth: '160px', justifyContent: 'center' }}>
             Register Team <ArrowRight size={18} style={{ marginLeft: '0.4rem' }} />
           </Link>
         </div>
