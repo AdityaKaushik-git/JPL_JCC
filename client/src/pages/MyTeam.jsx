@@ -77,7 +77,11 @@ export default function MyTeam() {
                 <div className="p-meta">
                   <span>{p.course}</span> • <span>{p.year} Year</span>
                 </div>
-                <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', marginTop: '1rem' }}>
+                <div style={{ borderTop: '1px solid var(--border)', paddingTop: '0.75rem', marginTop: '0.75rem' }}>
+                  <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-medium)', marginBottom: '0.2rem' }}>Enrollment: <span style={{ color: 'var(--text-dark)', fontWeight: 700 }}>{p.enrollment_number}</span></div>
+                  {p.player_mobile && <div style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-medium)' }}>Phone: <span style={{ color: 'var(--text-dark)', fontWeight: 700 }}>{p.player_mobile}</span></div>}
+                </div>
+                <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1rem', marginTop: '0.75rem' }}>
                   <div className="text-medium" style={{ fontSize: '0.8rem', fontWeight: 700 }}>ACQUIRED FOR</div>
                   <div className="p-price">₹{fmt(p.purchase_price)}</div>
                 </div>

@@ -3,9 +3,10 @@ const pool = require('../config/db');
 exports.getTeam = async (req, res) => {
     try {
         const [team] = await pool.query(`
-            SELECT t.*, p.name as player_name, p.playing_role, p.course, p.year
+            SELECT t.*, p.name as player_name, p.playing_role, p.course, p.year, p.enrollment_number, u.mobile as player_mobile
             FROM teams t
             JOIN players p ON t.player_id = p.id
+            LEFT JOIN users u ON p.enrollment_number = u.enrollment_number
             WHERE t.user_id = ?
             ORDER BY t.purchased_at DESC
         `, [req.user.id]);
