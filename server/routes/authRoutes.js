@@ -5,5 +5,6 @@ const authController = require('../controllers/authController');
 router.post('/register', authController.register);
 router.post('/login', authController.login);
 router.get('/me', require('../middleware/auth').authMiddleware, authController.getMe);
+router.get('/check-enrollment', authController.checkEnrollment);
 
 module.exports = router;

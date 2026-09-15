@@ -1,10 +1,18 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { api } from '../services/api'
-import { Users, History, ClipboardList, UserPlus, Trash2 } from 'lucide-react'
+import { Users, History, ClipboardList, UserPlus, Trash2, CheckCircle, XCircle, Loader } from 'lucide-react'
 import ToastContainer from '../components/Toast'
 import { useToast } from '../hooks/useToast'
 
 function fmt(n) { return Number(n || 0).toLocaleString('en-IN') }
+
+const PWD_RULES = [
+  { id: 'len',   label: 'At least 8 characters',               test: p => p.length >= 8 },
+  { id: 'upper', label: 'One uppercase letter',                 test: p => /[A-Z]/.test(p) },
+  { id: 'lower', label: 'One lowercase letter',                 test: p => /[a-z]/.test(p) },
+  { id: 'num',   label: 'One number',                           test: p => /[0-9]/.test(p) },
+  { id: 'sym',   label: 'One special character',                test: p => /[^A-Za-z0-9]/.test(p) },
+]
 
 export default function Admin() {
   const [tab, setTab] = useState('players')
@@ -19,6 +27,8 @@ export default function Admin() {
     full_name: '', enrollment_number: '', email: '', mobile: '', password: '', team_name: '',
     playing_role: 'Batsman', course: 'BTech', year: '1st', base_price: '1000' 
   })
+  const [addErrors, setAddErrors] = useState({})
+  const [enrollStatus, setEnrollStatus] = useState('idle')
   const [adding, setAdding] = useState(false)
   const { toasts, addToast, removeToast } = useToast()
 
@@ -31,18 +41,60 @@ export default function Admin() {
     ]).catch(console.error).finally(() => setLoading(false))
   }
 
-  useEffect(() => {
-    loadData()
+  useEffect(() => { loadData() }, [])
+
+  // Enrollment uniqueness check
+  const checkEnrollment = useCallback(async (val) => {
+    if (!val || val.length < 3) { setEnrollStatus('idle'); return }
+    setEnrollStatus('checking')
+    try {
+      const res = await api.checkEnrollment(val)
+      setEnrollStatus(res.taken ? 'taken' : 'free')
+      if (res.taken) setAddErrors(e => ({ ...e, enrollment_number: 'This enrollment number is already registered.' }))
+      else setAddErrors(e => ({ ...e, enrollment_number: '' }))
+    } catch { setEnrollStatus('idle') }
   }, [])
+
+  useEffect(() => {
+    const t = setTimeout(() => checkEnrollment(addForm.enrollment_number), 600)
+    return () => clearTimeout(t)
+  }, [addForm.enrollment_number, checkEnrollment])
 
   const statusClass = { Available: 'badge-success', 'In Auction': 'badge-orange', Sold: 'badge-info', Unsold: 'badge-gray' }
   const roleClass = { user: 'badge-info', player: 'badge-success', admin: 'badge-danger' }
   const filteredPlayers = players.filter(p => p.name.toLowerCase().includes(search.toLowerCase()))
 
-  function set(field) { return e => setAddForm(f => ({ ...f, [field]: e.target.value })) }
+  function set(field) {
+    return e => {
+      setAddForm(f => ({ ...f, [field]: e.target.value }))
+      setAddErrors(err => ({ ...err, [field]: '' }))
+    }
+  }
+
+  function validateAdmin() {
+    const e = {}
+    if (!addForm.full_name.trim()) e.full_name = 'Required.'
+    if (!addForm.enrollment_number.trim()) e.enrollment_number = 'Required.'
+    if (enrollStatus === 'taken') e.enrollment_number = 'This enrollment number is already registered.'
+    const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!addForm.email.trim()) e.email = 'Required.'
+    else if (!emailRx.test(addForm.email)) e.email = 'Invalid email.'
+    const mobileRx = /^[6-9]\d{9}$/
+    if (!addForm.mobile.trim()) e.mobile = 'Required.'
+    else if (!mobileRx.test(addForm.mobile.replace(/\s/g, ''))) e.mobile = 'Enter valid 10-digit mobile.'
+    if (createType === 'user' && !addForm.team_name.trim()) e.team_name = 'Team name is required.'
+    const failedPwd = PWD_RULES.filter(r => !r.test(addForm.password))
+    if (!addForm.password) e.password = 'Required.'
+    else if (failedPwd.length > 0) e.password = `Doesn't meet all requirements (${failedPwd.map(r => r.id).join(', ')}).`
+    return e
+  }
 
   async function handleCreateAccount(e) {
     e.preventDefault()
+    const errs = validateAdmin()
+    if (Object.keys(errs).length > 0) { setAddErrors(errs); return }
+    if (enrollStatus === 'checking') { addToast('Please wait for enrollment check to finish.', 'warning'); return }
+
     setAdding(true)
     try {
       const payload = {
@@ -66,7 +118,9 @@ export default function Admin() {
 
       await api.register(payload)
       addToast(`${createType === 'player' ? 'Player' : 'Bidder'} account created successfully!`, 'success')
-      setAddForm({ full_name: '', enrollment_number: '', email: '', mobile: '', password: '', playing_role: 'Batsman', course: 'BTech', year: '1st', base_price: '1000' })
+      setAddForm({ full_name: '', enrollment_number: '', email: '', mobile: '', password: '', team_name: '', playing_role: 'Batsman', course: 'BTech', year: '1st', base_price: '1000' })
+      setAddErrors({})
+      setEnrollStatus('idle')
       loadData()
       setTab(createType === 'player' ? 'players' : 'users')
     } catch (err) {
@@ -197,38 +251,63 @@ export default function Admin() {
                 <button className={`btn ${createType === 'user' ? 'btn-primary' : 'btn-ghost'}`} style={{ flex: 1 }} onClick={() => setCreateType('user')}>Create Bidder</button>
               </div>
 
-              <form onSubmit={handleCreateAccount} className="card" style={{ boxShadow: 'var(--shadow-sm)' }}>
+              <form onSubmit={handleCreateAccount} className="card" style={{ boxShadow: 'var(--shadow-sm)' }} noValidate>
                 <div className="grid-2">
                   <div className="form-group">
                     <label className="form-label">Full Name</label>
-                    <input className="form-input" value={addForm.full_name} onChange={set('full_name')} required placeholder="e.g. MS Dhoni" />
+                    <input className="form-input" style={{ borderColor: addErrors.full_name ? 'var(--danger)' : undefined }} value={addForm.full_name} onChange={set('full_name')} placeholder="e.g. MS Dhoni" />
+                    {addErrors.full_name && <p style={{ color: 'var(--danger)', fontSize: '0.8rem', marginTop: '0.3rem', fontWeight: 600 }}>{addErrors.full_name}</p>}
                   </div>
                   <div className="form-group">
                     <label className="form-label">Enrollment Number</label>
-                    <input className="form-input" value={addForm.enrollment_number} onChange={set('enrollment_number')} required placeholder="e.g. ENR2024001" />
+                    <div style={{ position: 'relative' }}>
+                      <input className="form-input" style={{ paddingRight: '2.5rem', borderColor: enrollStatus === 'free' ? 'var(--success)' : enrollStatus === 'taken' ? 'var(--danger)' : addErrors.enrollment_number ? 'var(--danger)' : undefined }} value={addForm.enrollment_number} onChange={set('enrollment_number')} placeholder="e.g. ENR2024001" />
+                      <span style={{ position: 'absolute', right: '0.75rem', top: '50%', transform: 'translateY(-50%)', display: 'flex' }}>
+                        {addForm.enrollment_number?.length >= 3 && (
+                          enrollStatus === 'checking' ? <Loader size={16} style={{ color: 'var(--text-medium)', animation: 'spin 0.75s linear infinite' }} /> :
+                          enrollStatus === 'taken'    ? <XCircle size={16} style={{ color: 'var(--danger)' }} /> :
+                          enrollStatus === 'free'     ? <CheckCircle size={16} style={{ color: 'var(--success)' }} /> : null
+                        )}
+                      </span>
+                    </div>
+                    {addErrors.enrollment_number && <p style={{ color: 'var(--danger)', fontSize: '0.8rem', marginTop: '0.3rem', fontWeight: 600 }}>{addErrors.enrollment_number}</p>}
+                    {enrollStatus === 'free' && !addErrors.enrollment_number && <p style={{ color: 'var(--success)', fontSize: '0.8rem', marginTop: '0.3rem', fontWeight: 600 }}>✓ Available</p>}
                   </div>
                 </div>
 
                 <div className="grid-2">
                   <div className="form-group">
                     <label className="form-label">Email Address</label>
-                    <input className="form-input" type="email" value={addForm.email} onChange={set('email')} required placeholder="user@example.com" />
+                    <input className="form-input" style={{ borderColor: addErrors.email ? 'var(--danger)' : undefined }} type="email" value={addForm.email} onChange={set('email')} placeholder="user@example.com" />
+                    {addErrors.email && <p style={{ color: 'var(--danger)', fontSize: '0.8rem', marginTop: '0.3rem', fontWeight: 600 }}>{addErrors.email}</p>}
                   </div>
                   <div className="form-group">
                     <label className="form-label">Mobile Number</label>
-                    <input className="form-input" type="tel" value={addForm.mobile} onChange={set('mobile')} required placeholder="10-digit mobile" />
+                    <input className="form-input" style={{ borderColor: addErrors.mobile ? 'var(--danger)' : undefined }} type="tel" value={addForm.mobile} onChange={set('mobile')} placeholder="10-digit mobile" maxLength={10} />
+                    {addErrors.mobile && <p style={{ color: 'var(--danger)', fontSize: '0.8rem', marginTop: '0.3rem', fontWeight: 600 }}>{addErrors.mobile}</p>}
                   </div>
                 </div>
                 
                 <div className="form-group">
                   <label className="form-label">Password</label>
-                  <input className="form-input" type="password" value={addForm.password} onChange={set('password')} required placeholder="Set a secure password" />
+                  <input className="form-input" style={{ borderColor: addErrors.password ? 'var(--danger)' : undefined }} type="password" value={addForm.password} onChange={set('password')} placeholder="Min 8 chars, upper, lower, number, symbol" />
+                  {addErrors.password && <p style={{ color: 'var(--danger)', fontSize: '0.8rem', marginTop: '0.3rem', fontWeight: 600 }}>{addErrors.password}</p>}
+                  {addForm.password && (
+                    <div style={{ marginTop: '0.5rem', display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                      {PWD_RULES.map(r => (
+                        <span key={r.id} style={{ fontSize: '0.72rem', fontWeight: 600, padding: '0.15rem 0.5rem', borderRadius: 20, background: r.test(addForm.password) ? '#ECFDF5' : '#FEF2F2', color: r.test(addForm.password) ? '#059669' : '#DC2626', border: `1px solid ${r.test(addForm.password) ? '#A7F3D0' : '#FECACA'}` }}>
+                          {r.test(addForm.password) ? '✓' : '✗'} {r.label}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 {createType === 'user' && (
                   <div className="form-group">
                     <label className="form-label">Team Name</label>
-                    <input className="form-input" value={addForm.team_name} onChange={set('team_name')} required placeholder="e.g. Chennai Super Kings" />
+                    <input className="form-input" style={{ borderColor: addErrors.team_name ? 'var(--danger)' : undefined }} value={addForm.team_name} onChange={set('team_name')} placeholder="e.g. Chennai Super Kings" />
+                    {addErrors.team_name && <p style={{ color: 'var(--danger)', fontSize: '0.8rem', marginTop: '0.3rem', fontWeight: 600 }}>{addErrors.team_name}</p>}
                   </div>
                 )}
 

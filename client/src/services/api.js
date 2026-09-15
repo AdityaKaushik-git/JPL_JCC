@@ -19,6 +19,7 @@ export const api = {
   login:             (body) => request('/auth/login',           { method: 'POST', body: JSON.stringify(body) }),
   register:          (body) => request('/auth/register',        { method: 'POST', body: JSON.stringify(body) }),
   getMe:             ()     => request('/auth/me'),
+  checkEnrollment:   (enr)  => request(`/auth/check-enrollment?enrollment_number=${encodeURIComponent(enr)}`),
   getPlayers:        ()     => request('/players'),
   getStandings:      ()     => request('/users/standings'),
   getMyTeam:         ()     => request('/users/my-team'),

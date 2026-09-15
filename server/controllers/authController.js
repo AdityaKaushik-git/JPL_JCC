@@ -1,4 +1,4 @@
-﻿const pool = require('../config/db');
+const pool = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -122,6 +122,23 @@ exports.getMe = async (req, res) => {
     } catch (error) {
         console.error('GETME ERROR:', error.message);
         res.status(500).json({ message: 'Server error', detail: error.message });
+    }
+};
+
+exports.checkEnrollment = async (req, res) => {
+    try {
+        const { enrollment_number } = req.query;
+        if (!enrollment_number) return res.json({ taken: false });
+
+        // Check both users table and players table
+        const [userRows] = await pool.query('SELECT id FROM users WHERE enrollment_number = ?', [enrollment_number]);
+        const [playerRows] = await pool.query('SELECT id FROM players WHERE enrollment_number = ?', [enrollment_number]);
+
+        const taken = userRows.length > 0 || playerRows.length > 0;
+        res.json({ taken });
+    } catch (error) {
+        console.error('CHECK ENROLLMENT ERROR:', error.message);
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
