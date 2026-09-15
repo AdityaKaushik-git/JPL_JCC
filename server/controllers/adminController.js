@@ -6,7 +6,7 @@ exports.getUsers = async (req, res) => {
         res.json({ users });
     } catch (error) {
         console.error('GET USERS ERROR:', error.message);
-        res.status(500).json({ message: 'Server error', detail: error.message });
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
@@ -34,7 +34,7 @@ exports.addPlayer = async (req, res) => {
     } catch (error) {
         console.error('ADD PLAYER ERROR:', error.message);
         console.error('ADD PLAYER STACK:', error.stack);
-        res.status(500).json({ message: 'Server error', detail: error.message });
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
@@ -48,7 +48,7 @@ exports.updatePlayer = async (req, res) => {
         res.json({ message: 'Player updated successfully' });
     } catch (error) {
         console.error('UPDATE PLAYER ERROR:', error.message);
-        res.status(500).json({ message: 'Server error', detail: error.message });
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
@@ -82,7 +82,7 @@ exports.deletePlayer = async (req, res) => {
     } catch (error) {
         await connection.rollback();
         console.error('DELETE PLAYER ERROR:', error.message);
-        res.status(500).json({ message: 'Server error', detail: error.message });
+        res.status(500).json({ message: 'Server error' });
     } finally {
         connection.release();
     }
@@ -164,7 +164,7 @@ exports.deleteAuctionHistoryRecord = async (req, res) => {
     } catch (error) {
         await connection.rollback();
         console.error('DELETE AUCTION HISTORY ERROR:', error.message);
-        res.status(500).json({ message: 'Server error', detail: error.message });
+        res.status(500).json({ message: 'Server error' });
     } finally {
         connection.release();
     }

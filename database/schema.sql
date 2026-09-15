@@ -21,6 +21,7 @@ CREATE TABLE players (
     year VARCHAR(20) NOT NULL,
     enrollment_number VARCHAR(50) UNIQUE NOT NULL,
     base_price DECIMAL(10,2) NOT NULL,
+    base_price_updates_count INT DEFAULT 0,
     status ENUM('Available', 'In Auction', 'Sold', 'Unsold') DEFAULT 'Available',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -50,7 +51,7 @@ CREATE TABLE bids (
 CREATE TABLE teams (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
-    player_id INT NOT NULL,
+    player_id INT NOT NULL UNIQUE,
     purchase_price DECIMAL(10,2) NOT NULL,
     purchased_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id),
@@ -59,7 +60,7 @@ CREATE TABLE teams (
 
 CREATE TABLE auction_results (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    auction_id INT NOT NULL,
+    auction_id INT NOT NULL UNIQUE,
     player_id INT NOT NULL,
     status ENUM('Sold', 'Unsold') NOT NULL,
     winning_bid DECIMAL(10,2) DEFAULT NULL,

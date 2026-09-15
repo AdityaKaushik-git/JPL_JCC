@@ -34,7 +34,7 @@ module.exports = (io) => {
             return next();
         }
 
-        jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+        jwt.verify(token, process.env.JWT_SECRET, { algorithms: ['HS256'] }, (err, decoded) => {
             if (err) {
                 socket.user = { id: 'guest_' + socket.id, role: 'guest' };
             } else {
@@ -115,9 +115,8 @@ module.exports = (io) => {
         });
 
         socket.on('user:placeBid', async (data) => {
-            // Only bidders (role: 'user') can place bids — players are not allowed
-            if (socket.user.role === 'player') {
-                return socket.emit('auction:notification', { text: 'Players are not allowed to place bids', type: 'danger' });
+            if (socket.user.role !== 'user') {
+                return socket.emit('auction:notification', { text: 'Only registered franchise owners can place bids', type: 'danger' });
             }
 
             // Check if user already has 11 players
@@ -134,6 +133,10 @@ module.exports = (io) => {
             const auctionId = Number(data.auctionId);
             const amount = Number(data.amount);
             
+            if (isNaN(auctionId) || isNaN(amount) || amount <= 0) {
+                return socket.emit('auction:notification', { text: 'Invalid bid amount', type: 'danger' });
+            }
+
             if (activeAuction.status !== 'Live' || activeAuction.auctionId !== auctionId) {
                 return socket.emit('auction:notification', { text: 'Auction is not active', type: 'danger' });
             }
@@ -195,13 +198,15 @@ module.exports = (io) => {
         });
 
         socket.on('admin:sellPlayer', async () => {
-            if (socket.user.role !== 'admin' || !activeAuction.auctionId || activeAuction.status === 'Completed') return;
+            if (socket.user.role !== 'admin' || !activeAuction.auctionId || activeAuction.status === 'Completed' || activeAuction.status === 'Processing') return;
 
             clearInterval(activeAuction.timerInterval);
 
             if (!activeAuction.highestBidderId) {
                 return socket.emit('auction:notification', { text: 'No bids placed. Mark as unsold.', type: 'warning' });
             }
+
+            activeAuction.status = 'Processing';
 
             const connection = await pool.getConnection();
             try {
@@ -252,6 +257,7 @@ module.exports = (io) => {
                 });
 
             } catch (err) {
+                activeAuction.status = 'Paused'; // Revert back on error
                 await connection.rollback();
                 console.error(err);
             } finally {
@@ -260,9 +266,10 @@ module.exports = (io) => {
         });
 
         socket.on('admin:markUnsold', async () => {
-            if (socket.user.role !== 'admin' || !activeAuction.auctionId) return;
+            if (socket.user.role !== 'admin' || !activeAuction.auctionId || activeAuction.status === 'Completed' || activeAuction.status === 'Processing') return;
 
             clearInterval(activeAuction.timerInterval);
+            activeAuction.status = 'Processing';
 
             try {
                 const playerId = activeAuction.player.id;
@@ -275,6 +282,7 @@ module.exports = (io) => {
                 io.emit('auction:stateUpdate', getSanitizedState());
 
             } catch (err) {
+                activeAuction.status = 'Paused';
                 console.error(err);
             }
         });

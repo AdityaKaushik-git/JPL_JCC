@@ -135,14 +135,15 @@ exports.updatePlayerProfile = async (req, res) => {
         if (users.length === 0) return res.status(404).json({ message: 'User not found' });
         
         const enrollmentNo = users[0].enrollment_number;
-        const [players] = await pool.query('SELECT base_price_updates_count FROM players WHERE enrollment_number = ?', [enrollmentNo]);
-        if (players.length === 0) return res.status(404).json({ message: 'Player not found' });
+        const [result] = await pool.query(
+            'UPDATE players SET base_price = ?, base_price_updates_count = base_price_updates_count + 1 WHERE enrollment_number = ? AND base_price_updates_count < 2', 
+            [base_price, enrollmentNo]
+        );
         
-        if (players[0].base_price_updates_count >= 2) {
+        if (result.affectedRows === 0) {
             return res.status(400).json({ message: 'You have reached the maximum limit of 2 base price updates.' });
         }
 
-        await pool.query('UPDATE players SET base_price = ?, base_price_updates_count = base_price_updates_count + 1 WHERE enrollment_number = ?', [base_price, enrollmentNo]);
         res.json({ message: 'Base price updated successfully' });
     } catch (error) {
         console.error(error);

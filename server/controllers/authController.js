@@ -62,7 +62,7 @@ exports.register = async (req, res) => {
     } catch (error) {
         console.error('REGISTER ERROR:', error.message);
         console.error('REGISTER STACK:', error.stack);
-        res.status(500).json({ message: 'Server error', detail: error.message });
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
@@ -121,7 +121,7 @@ exports.getMe = async (req, res) => {
         res.json({ user: users[0] });
     } catch (error) {
         console.error('GETME ERROR:', error.message);
-        res.status(500).json({ message: 'Server error', detail: error.message });
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
