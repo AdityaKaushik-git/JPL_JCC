@@ -49,7 +49,7 @@ export default function Navbar() {
             </span>
           )}
           <span className="nav-user-name" style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-dark)' }}>{user?.full_name}</span>
-          <button className="btn btn-ghost btn-sm" onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+          <button className="btn btn-sm" onClick={handleLogout} style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', backgroundColor: 'var(--danger)', color: 'white' }}>
             <LogOut size={16} /> Logout
           </button>
         </div>
