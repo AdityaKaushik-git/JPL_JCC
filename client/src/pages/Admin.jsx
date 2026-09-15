@@ -33,25 +33,17 @@ export default function Admin() {
   const [adding, setAdding] = useState(false)
   const { toasts, addToast, removeToast } = useToast()
 
-  const [stats, setStats] = useState(null)
-  const [liveStats, setLiveStats] = useState({ bidders: 0, players: 0, admins: 0, total: 0 })
-
   function loadData() {
     setLoading(true)
     Promise.all([
       api.getAdminPlayers().then(d => setPlayers(d.players || [])),
       api.getAdminUsers().then(d => setUsers(d.users || [])),
       api.getAuctionHistory().then(d => setHistory(d.history || [])),
-      api.getAdminStats().then(d => setStats(d)),
     ]).catch(console.error).finally(() => setLoading(false))
   }
 
   useEffect(() => { 
     loadData() 
-    const socket = io({ auth: { token: localStorage.getItem('jpl_token') } })
-    socket.emit('user:join')
-    socket.on('live:stats', (data) => setLiveStats(data))
-    return () => socket.disconnect()
   }, [])
 
   // Enrollment uniqueness check
@@ -185,34 +177,6 @@ export default function Admin() {
           <p>Database management and system logs</p>
         </div>
       </div>
-
-      {stats && (
-        <div className="grid-4 mb-3">
-          <div className="card text-center" style={{ padding: '1.5rem 1rem' }}>
-            <h4 style={{ color: 'var(--text-medium)', fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Total Registered</h4>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--primary)' }}>{stats.totalPlayers + stats.activeBidders}</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-medium)', marginTop: '0.25rem' }}>{stats.activeBidders} Bidders / {stats.totalPlayers} Players</div>
-          </div>
-          <div className="card text-center" style={{ padding: '1.5rem 1rem' }}>
-            <h4 style={{ color: 'var(--text-medium)', fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Sold Players</h4>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--success)' }}>{stats.soldPlayers}</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-medium)', marginTop: '0.25rem' }}>of {stats.totalPlayers} Total Players</div>
-          </div>
-          <div className="card text-center" style={{ padding: '1.5rem 1rem', border: '2px solid rgba(59, 130, 246, 0.3)' }}>
-            <h4 style={{ color: 'var(--text-medium)', fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
-              <span style={{ width: 8, height: 8, background: '#3b82f6', borderRadius: '50%', boxShadow: '0 0 8px #3b82f6' }}></span>
-              Live Users
-            </h4>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: '#3b82f6' }}>{liveStats.total}</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-medium)', marginTop: '0.25rem' }}>{liveStats.bidders} Bidders / {liveStats.players} Players</div>
-          </div>
-          <div className="card text-center" style={{ padding: '1.5rem 1rem' }}>
-            <h4 style={{ color: 'var(--text-medium)', fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Unsold Players</h4>
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-medium)' }}>{stats.unsoldPlayers}</div>
-            <div style={{ fontSize: '0.85rem', color: 'var(--text-medium)', marginTop: '0.25rem' }}>Awaiting re-auction</div>
-          </div>
-        </div>
-      )}
 
       <div className="card" style={{ padding: '0', overflow: 'hidden' }}>
         <div className="admin-tabs" style={{ display: 'flex', gap: '1rem', padding: '1.5rem 2rem', background: 'var(--off-white)', borderBottom: '1px solid var(--border)' }}>

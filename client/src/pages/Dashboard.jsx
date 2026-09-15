@@ -1,5 +1,6 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { io } from 'socket.io-client'
 import { useAuth } from '../contexts/AuthContext'
 import { api } from '../services/api'
 import { Wallet, Users, History, Settings, Play, ShieldCheck, Activity, Trophy, Clock } from 'lucide-react'
@@ -10,13 +11,25 @@ export default function Dashboard() {
   const { user } = useAuth()
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
+  
+  // Admin only stats
+  const [adminStats, setAdminStats] = useState(null)
+  const [liveStats, setLiveStats] = useState({ bidders: 0, players: 0, admins: 0, total: 0 })
 
   useEffect(() => {
     api.getDashboard()
       .then(d => setData(d))
       .catch(console.error)
       .finally(() => setLoading(false))
-  }, [])
+
+    if (user?.role === 'admin') {
+      api.getAdminStats().then(setAdminStats).catch(console.error)
+      const socket = io({ auth: { token: localStorage.getItem('jpl_token') } })
+      socket.emit('user:join')
+      socket.on('live:stats', setLiveStats)
+      return () => socket.disconnect()
+    }
+  }, [user])
 
   if (loading) return (
     <div className="spinner-wrapper" style={{ minHeight: '60vh' }}>
@@ -34,6 +47,34 @@ export default function Dashboard() {
             <p>System overview and auction controls</p>
           </div>
         </div>
+
+        {adminStats && (
+          <div className="grid-4 mb-3">
+            <div className="card text-center" style={{ padding: '1.5rem 1rem' }}>
+              <h4 style={{ color: 'var(--text-medium)', fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Total Registered</h4>
+              <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--primary)' }}>{adminStats.totalPlayers + adminStats.activeBidders}</div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-medium)', marginTop: '0.25rem' }}>{adminStats.activeBidders} Bidders / {adminStats.totalPlayers} Players</div>
+            </div>
+            <div className="card text-center" style={{ padding: '1.5rem 1rem' }}>
+              <h4 style={{ color: 'var(--text-medium)', fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Sold Players</h4>
+              <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--success)' }}>{adminStats.soldPlayers}</div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-medium)', marginTop: '0.25rem' }}>of {adminStats.totalPlayers} Total Players</div>
+            </div>
+            <div className="card text-center" style={{ padding: '1.5rem 1rem', border: '2px solid rgba(59, 130, 246, 0.3)' }}>
+              <h4 style={{ color: 'var(--text-medium)', fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+                <span style={{ width: 8, height: 8, background: '#3b82f6', borderRadius: '50%', boxShadow: '0 0 8px #3b82f6' }}></span>
+                Live Users
+              </h4>
+              <div style={{ fontSize: '2rem', fontWeight: 800, color: '#3b82f6' }}>{liveStats.total}</div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-medium)', marginTop: '0.25rem' }}>{liveStats.bidders} Bidders / {liveStats.players} Players</div>
+            </div>
+            <div className="card text-center" style={{ padding: '1.5rem 1rem' }}>
+              <h4 style={{ color: 'var(--text-medium)', fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Unsold Players</h4>
+              <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--text-medium)' }}>{adminStats.unsoldPlayers}</div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-medium)', marginTop: '0.25rem' }}>Awaiting re-auction</div>
+            </div>
+          </div>
+        )}
 
         <div className="quick-actions">
           <Link to="/auction" className="action-card">
