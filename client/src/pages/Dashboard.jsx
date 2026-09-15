@@ -49,7 +49,7 @@ export default function Dashboard() {
         </div>
 
         {adminStats && (
-          <div className="grid-4 mb-3">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
             <div className="card text-center" style={{ padding: '1.5rem 1rem' }}>
               <h4 style={{ color: 'var(--text-medium)', fontSize: '0.9rem', textTransform: 'uppercase', marginBottom: '0.5rem' }}>Total Registered</h4>
               <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--primary)' }}>{adminStats.totalPlayers + adminStats.activeBidders}</div>
