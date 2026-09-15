@@ -1,12 +1,12 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { Trophy, Wallet, LogOut, Menu } from 'lucide-react'
 
 const NAV_LINKS = {
-  admin:  [{ to: '/dashboard', label: 'Dashboard' }, { to: '/auction', label: 'Auction' }, { to: '/admin', label: 'Admin Panel' }],
-  user:   [{ to: '/dashboard', label: 'Dashboard' }, { to: '/auction', label: 'Live Auction' }, { to: '/my-team', label: 'My Team' }, { to: '/my-bids', label: 'My Bids' }],
-  player: [{ to: '/dashboard', label: 'Dashboard' }, { to: '/auction', label: 'Live Auction' }],
+  admin:  [{ to: '/dashboard', label: 'Dashboard' }, { to: '/auction', label: 'Auction' }, { to: '/standings', label: 'Standings' }, { to: '/admin', label: 'Admin Panel' }],
+  user:   [{ to: '/dashboard', label: 'Dashboard' }, { to: '/auction', label: 'Live Auction' }, { to: '/my-team', label: 'My Team' }, { to: '/my-bids', label: 'My Bids' }, { to: '/standings', label: 'Standings' }],
+  player: [{ to: '/dashboard', label: 'Dashboard' }, { to: '/auction', label: 'Live Auction' }, { to: '/standings', label: 'Standings' }],
 }
 
 export default function Navbar() {

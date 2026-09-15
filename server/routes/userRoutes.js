@@ -5,6 +5,7 @@ const { authMiddleware } = require('../middleware/auth');
 
 router.get('/my-team', authMiddleware, userController.getTeam);
 router.get('/my-bids', authMiddleware, userController.getBids);
+router.get('/standings', authMiddleware, userController.getStandings);
 router.get('/profile', authMiddleware, userController.getProfile);
 router.put('/profile', authMiddleware, userController.updateProfile);
 router.get('/dashboard', authMiddleware, userController.getDashboard);

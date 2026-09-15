@@ -20,6 +20,7 @@ export const api = {
   register:          (body) => request('/auth/register',        { method: 'POST', body: JSON.stringify(body) }),
   getMe:             ()     => request('/auth/me'),
   getPlayers:        ()     => request('/players'),
+  getStandings:      ()     => request('/users/standings'),
   getMyTeam:         ()     => request('/users/my-team'),
   getMyBids:         ()     => request('/users/my-bids'),
   getProfile:        ()     => request('/users/profile'),

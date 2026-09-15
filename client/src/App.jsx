@@ -11,6 +11,7 @@ import MyTeam from './pages/MyTeam'
 import MyBids from './pages/MyBids'
 import Profile from './pages/Profile'
 import Admin from './pages/Admin'
+import Standings from './pages/Standings'
 
 function AppRoutes() {
   const { user } = useAuth()
@@ -23,6 +24,7 @@ function AppRoutes() {
         <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
         <Route path="/auction" element={<ProtectedRoute><Auction /></ProtectedRoute>} />
+        <Route path="/standings" element={<ProtectedRoute><Standings /></ProtectedRoute>} />
         <Route path="/my-team" element={<ProtectedRoute roles={['user']}><MyTeam /></ProtectedRoute>} />
         <Route path="/my-bids" element={<ProtectedRoute roles={['user']}><MyBids /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />

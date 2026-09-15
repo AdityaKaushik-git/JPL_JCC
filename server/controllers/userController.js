@@ -139,3 +139,22 @@ exports.updatePlayerProfile = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+exports.getStandings = async (req, res) => {
+    try {
+        const [standings] = await pool.query(\
+            SELECT u.id, u.full_name as owner_name, u.purse,
+                   COALESCE(SUM(t.purchase_price), 0) as total_spent,
+                   COUNT(t.id) as players_count
+            FROM users u
+            LEFT JOIN teams t ON u.id = t.user_id
+            WHERE u.role = 'user'
+            GROUP BY u.id, u.full_name, u.purse
+            ORDER BY u.purse DESC
+        \);
+        res.json({ standings });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
