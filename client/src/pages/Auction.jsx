@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { io } from 'socket.io-client'
 import { useAuth } from '../contexts/AuthContext'
 import { api } from '../services/api'
@@ -44,7 +45,7 @@ export default function Auction() {
 
     socket.on('auction:sold', data => {
       setSoldInfo(data)
-      if (data.userId === user?.id) {
+      if (user && data.userId === user?.id) {
         setPurse(p => p - data.price)
         updateUser({ purse: purse - data.price })
       }
@@ -55,7 +56,7 @@ export default function Auction() {
 
     socket.on('purse:update', newPurse => {
       setPurse(Number(newPurse))
-      updateUser({ purse: newPurse })
+      if (user) updateUser({ purse: newPurse })
     })
 
     socket.on('auction:playerReset', () => {
@@ -117,17 +118,22 @@ export default function Auction() {
         </div>
       )}
 
-      {user?.role === 'user' && (
-        <div className="flex justify-between items-center mb-3">
-          <h1 className="fw-800 text-dark" style={{ fontSize: '1.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Gavel size={28} color="var(--primary)" /> Live Auction Arena
-          </h1>
-          <div className="card" style={{ padding: '0.6rem 1.5rem', background: 'var(--primary-bg)', border: '1px solid #FFD8C4', boxShadow: 'none' }}>
-            <div style={{ fontSize: '0.8rem', color: 'var(--primary-dark)', fontWeight: 700, textTransform: 'uppercase' }}>Available Purse</div>
-            <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--primary)' }}>₹{fmt(purse)}</div>
-          </div>
+      <div className="flex justify-between items-center mb-3">
+        <h1 className="fw-800 text-dark" style={{ fontSize: '1.8rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Gavel size={28} color="var(--primary)" /> Live Auction Arena
+        </h1>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+          {!user && (
+            <Link to="/" className="btn btn-outline btn-sm">Return Home</Link>
+          )}
+          {user?.role === 'user' && (
+            <div className="card" style={{ padding: '0.6rem 1.5rem', background: 'var(--primary-bg)', border: '1px solid #FFD8C4', boxShadow: 'none' }}>
+              <div style={{ fontSize: '0.8rem', color: 'var(--primary-dark)', fontWeight: 700, textTransform: 'uppercase' }}>Available Purse</div>
+              <div style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--primary)' }}>₹{fmt(purse)}</div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
 
       <div className="auction-layout">
         {/* MAIN ARENA */}

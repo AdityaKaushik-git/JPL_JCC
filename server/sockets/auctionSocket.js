@@ -29,11 +29,17 @@ module.exports = (io) => {
     // Authentication middleware for sockets
     io.use((socket, next) => {
         const token = socket.handshake.auth.token;
-        if (!token) return next(new Error('Authentication error'));
+        if (!token) {
+            socket.user = { id: 'guest_' + socket.id, role: 'guest' };
+            return next();
+        }
 
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-            if (err) return next(new Error('Authentication error'));
-            socket.user = decoded;
+            if (err) {
+                socket.user = { id: 'guest_' + socket.id, role: 'guest' };
+            } else {
+                socket.user = decoded;
+            }
             next();
         });
     });

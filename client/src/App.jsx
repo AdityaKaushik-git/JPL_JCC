@@ -23,7 +23,7 @@ function AppRoutes() {
         <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <Login />} />
         <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <Register />} />
         <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/auction" element={<ProtectedRoute><Auction /></ProtectedRoute>} />
+        <Route path="/auction" element={<Auction />} />
         <Route path="/standings" element={<ProtectedRoute><Standings /></ProtectedRoute>} />
         <Route path="/my-team" element={<ProtectedRoute roles={['user']}><MyTeam /></ProtectedRoute>} />
         <Route path="/my-bids" element={<ProtectedRoute roles={['user']}><MyBids /></ProtectedRoute>} />
